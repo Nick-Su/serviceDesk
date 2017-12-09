@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Http\Request;
+
 class RegisterController extends Controller
 {
     /*
@@ -28,7 +30,13 @@ class RegisterController extends Controller
      *
      * @var string
      */
+
     protected $redirectTo = '/employee/home';
+
+public function showManagementForm ()
+    {
+        return view('employee.manage');
+    }
 
     /**
      * Create a new controller instance.
@@ -50,7 +58,7 @@ class RegisterController extends Controller
     {
         return Validator::make($data, [
             'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:employees',
+            'email' => 'required|email|max:255|unique:employees|unique:individuals|unique:legals',
             'password' => 'required|min:6|confirmed',
         ]);
     }
@@ -67,18 +75,20 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
+            'phone_number' => $data['phone_number'],
+            
+            'priv_add_employee' => 1,
+            'priv_edit_employee' => 1, 
+            'priv_delete_employee' => 1, 
+            'head_unit_id' => '',      
+            'room' => '',               
+            'id_company' => uniqid('', true), 
+            'id_role' => 1, 
         ]);
     }
-
-    /**
-     * Show the application registration form.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function showRegistrationForm()
-    {
-        return view('employee.auth.register');
-    }
+ 
+    
+  
 
     /**
      * Get the guard to be used during registration.
@@ -89,4 +99,7 @@ class RegisterController extends Controller
     {
         return Auth::guard('employee');
     }
+
+
+
 }

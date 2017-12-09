@@ -16,7 +16,7 @@ class Employee extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'phone_number', 'priv_add_employee', 'priv_edit_employee', 'priv_delete_employee', 'units', 'id_company', 'id_role', 'head_unit_id', 'room',
     ];
 
     /**
@@ -25,7 +25,7 @@ class Employee extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 
     ];
 
     /**

@@ -43,6 +43,9 @@ Route::group(['prefix' => 'legal'], function () {
   Route::get('/password/reset/{token}', 'LegalAuth\ResetPasswordController@showResetForm');
 });
 
+#
+############### Employee Routes #################
+#
 Route::group(['prefix' => 'employee'], function () {
   Route::get('/login', 'EmployeeAuth\LoginController@showLoginForm')->name('login');
   Route::post('/login', 'EmployeeAuth\LoginController@login');
@@ -55,4 +58,8 @@ Route::group(['prefix' => 'employee'], function () {
   Route::post('/password/reset', 'EmployeeAuth\ResetPasswordController@reset')->name('password.email');
   Route::get('/password/reset', 'EmployeeAuth\ForgotPasswordController@showLinkRequestForm')->name('password.reset');
   Route::get('/password/reset/{token}', 'EmployeeAuth\ResetPasswordController@showResetForm');
+
+  #Route::post('/add_new_employee', 'EmployeeAuth\RegisterController@add_new_employee');
+
+  #Route::post('/add_new_employee', ['as' => 'form_url', 'uses' => 'EmployeeAuth\RegisterController@add_new_employee']);
 });

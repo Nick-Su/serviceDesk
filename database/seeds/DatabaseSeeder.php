@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         DB::table('legals')->insert([
-            'name' => 'Legal Client',
+            'name' => 'Legal Client 1',
             'email' => 'test1@test.com',
             'password' => bcrypt('123456'),
         ]);
@@ -27,6 +27,13 @@ class DatabaseSeeder extends Seeder
             'name' => 'Indi User 1',
             'email' => 'da@da.da',
             'password' => bcrypt('123456'),
+        ]);
+
+        DB::table('roles')->insert([
+            'title' => 'Administrator',
+        ]);
+        DB::table('roles')->insert([
+            'title' => 'Employee',
         ]);
     }
 }
