@@ -19,7 +19,7 @@
                             <div class="col-md-6">
                                 <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus>
 
-                                @if ($errors->has('fio'))
+                                @if ($errors->has('name'))
                                     <span class="help-block">
                                         <strong>{{ $errors->first('name') }}</strong>
                                     </span>
@@ -75,6 +75,50 @@
                             </div>
                         </div>
 
+                        <!-- Unit -->
+                        <div class="form-group">
+                            <label for="unit" class="col-md-4 control-label">Отдел</label>
+
+                            <div class="col-md-6">
+                                <select class="form-control" name="id_unit">
+                                    @forelse($units as $unit)
+                                    <option value="{{ $unit -> id }}">{{ $unit->name }}</option>
+                                    @empty
+                                        <p>Отделы не найдены.</p>
+                                    @endforelse
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Head Unit ID -->
+                        <div class="form-group">
+                            <label for="unit" class="col-md-4 control-label">Начальник отдела</label>
+
+                            <div class="col-md-6">
+                                <select class="form-control" name="head_unit_id">
+                                    <option value="">Не является начальником отдела</option>
+                                    @forelse($units as $unit)
+                                    <option value=" {{ $unit -> id }}">{{ $unit->name }}</option>
+                                    @empty
+                                        <p>Отделы не найдены.</p>
+                                    @endforelse
+                                </select>
+                            </div>
+                        </div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
                         <!-- Room -->
                         <div class="form-group">
                             <label for="room" class="col-md-4 control-label">Кабинет</label>
@@ -116,7 +160,7 @@
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
                                 <button type="submit" class="btn btn-primary">
-                                    Добавить
+                                    Добавить сотрудника
                                 </button>
                             </div>
                         </div>

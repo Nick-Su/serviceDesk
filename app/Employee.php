@@ -16,7 +16,7 @@ class Employee extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'phone_number', 'priv_add_employee', 'priv_edit_employee', 'priv_delete_employee', 'units', 'id_company', 'id_role', 'head_unit_id', 'room',
+        'name', 'email', 'password', 'phone_number', 'priv_add_employee', 'priv_edit_employee', 'priv_delete_employee', 'id_company', 'id_role', 'head_unit_id', 'id_unit', 'room',
     ];
 
     /**

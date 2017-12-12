@@ -33,9 +33,14 @@ class RegisterController extends Controller
 
     protected $redirectTo = '/employee/home';
 
-public function showManagementForm ()
+    public function showManagementForm ()
     {
         return view('employee.manage');
+    }
+
+    public function showRegistrationForm ()
+    {
+        return view('employee.auth.register');
     }
 
     /**

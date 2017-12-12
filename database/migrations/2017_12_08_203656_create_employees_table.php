@@ -24,6 +24,7 @@ class CreateEmployeesTable extends Migration
             $table->boolean('priv_add_employee')->nullable();
             $table->boolean('priv_edit_employee')->nullable();
             $table->boolean('priv_delete_employee')->nullable();
+            $table->string('id_unit')->nullable();
             $table->string('head_unit_id')->nullable();
             $table->string('room')->nullable();
             $table->string('id_company')->nullable();

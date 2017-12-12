@@ -59,6 +59,7 @@ Route::group(['prefix' => 'employee'], function () {
   Route::get('/password/reset', 'EmployeeAuth\ForgotPasswordController@showLinkRequestForm')->name('password.reset');
   Route::get('/password/reset/{token}', 'EmployeeAuth\ResetPasswordController@showResetForm');
 
+ 
   #Route::post('/add_new_employee', 'EmployeeAuth\RegisterController@add_new_employee');
 
   #Route::post('/add_new_employee', ['as' => 'form_url', 'uses' => 'EmployeeAuth\RegisterController@add_new_employee']);

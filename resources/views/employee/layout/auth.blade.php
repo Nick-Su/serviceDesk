@@ -52,6 +52,19 @@
                         <li><a href="{{ url('/employee/login') }}">Login</a></li>
                         <li><a href="{{ url('/employee/register') }}">Register</a></li>
                     @else
+                        <li class="dropdown"> 
+                             <a href="#"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                Мои заявки <span class="caret"></span>
+                            </a>
+
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ url('/employee/create_ticket') }}">Создать заявку</a></li>
+                                <li><a href="{{ url('/employee/view_all_incoming_tickets') }}">Входящие заявки</a></li>
+                                <li><a href="{{ url('/employee/company_units') }}">Исходящие заявки</a></li>
+                            </ul>
+                        </li>
+    
+
                         <li class="dropdown">
                             <a href="#"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                 Администрирование <span class="caret"></span>
@@ -59,7 +72,8 @@
 
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ url('/employee/management') }}">Управление сотрудникими</a></li>
-                                <li><a href="">Профиль компании</a></li>
+                                <li><a href="{{ url('/employee/company_profile') }}">Профиль компании</a></li>
+                                <li><a href="{{ url('/employee/company_units') }}">Отделы</a></li>
                             </ul>
                         </li>
 
