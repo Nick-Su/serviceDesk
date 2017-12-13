@@ -72,5 +72,12 @@ class CRUDController extends Controller
     	return(redirect('/employee/outgoing_tickets'));
     }
 
+/*
+    protected function appoint_executor_to_ticket(Request $request)
+    {
+    	'id_executor' => $request['id_executor'];
+    	return(redirect('/outgoing_tickets'));
+    } */
+
 
 }
