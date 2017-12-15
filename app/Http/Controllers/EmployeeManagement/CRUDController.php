@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Employee;
 use App\Unit;
 use App\Ticket;
-
+use DB;
 use Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Auth;
@@ -72,12 +72,97 @@ class CRUDController extends Controller
     	return(redirect('/employee/outgoing_tickets'));
     }
 
-/*
-    protected function appoint_executor_to_ticket(Request $request)
+    # this function gets all incoming tickets related to user
+    protected function getAllIncomingTickets()
     {
-    	'id_executor' => $request['id_executor'];
-    	return(redirect('/outgoing_tickets'));
-    } */
+    	# This query selects all tickets related to head unit
+		if (Auth::user()->head_unit_id != NULL) {
+			$tickets = DB::table('employee_tickets')
+				->where('id_company', Auth::user()->id_company)
+				->where('unit_to_id', Auth::user()->head_unit_id)
+				->get();
+
+		# This query selects all employees of single unit
+		$employees = DB::table('employees')
+			->where('id_company', Auth::user()->id_company)
+			->where('id_unit', Auth::user()->head_unit_id)
+			->get();
+
+		} else { 
+			# this query selects all tickets related to executor
+			$tickets = DB::table('employee_tickets')
+				->where('id_company', Auth::user()->id_company)
+				->where('id_executor', Auth::user()->id)
+				->get();
+			$employees = NULL;
+		}
+
+		# This algorithm select the name of current executor by id
+		$current_executor = [];
+		$current_employee_init_name = "";
+		$i=0;
+		foreach($tickets as $ticket) {
+			
+			$current_executor_name = DB::table('employees')
+				->where('id', $ticket->id_executor)
+				->select('name')
+				->get();
+
+			#this loop gets exatcly the name string from object
+			# which was recieved above
+			$tmpExecutorName = "Нет исполнителя";
+			$tmpCurrentStatusName = NULL;
+			foreach ($current_executor_name as $tmp) {
+				$tmpExecutorName = $tmp->name;
+			}
+
+			# this piece of code selects employee init name by id from ticket
+			$current_employee_init_name = DB::table('employees')
+				->where('id', $ticket->employee_init_id)
+				->select('name')
+				->get();
+
+			foreach ($current_employee_init_name as $tmp) {
+				$tmpEmployeeInitName = $tmp->name;
+			}
+
+			#get status name
+			$current_status_name = DB::table('statuses')
+				->where('id', $ticket->id_status)
+				->select('name')
+				->get();
+
+			foreach ($current_status_name as $tmp) {
+				$tmpCurrentStatusName = $tmp->name;
+			}
+			
+			
+			$tickets[$i]->current_employee_init_name = $tmpEmployeeInitName;
+			$tickets[$i]->current_executor_name = $tmpExecutorName;
+
+			$tickets[$i]->current_status_name = $tmpCurrentStatusName;
+			$i++;
+			
+		} 
+	
+		return view('employee.tickets.view_all_incoming_tickets')
+			->with('tickets', $tickets)
+			->with('employees', $employees)
+			->with('current_executor', $current_executor);
+    
+    }
+
+    protected function appointExecutorToTicket(Request $request)
+    {
+    	$id = $request['id_ticket'];
+    	$recordToUpdate = Ticket::findOrFail($id);
+
+        DB::table('employee_tickets')
+            ->where('id', $id)
+            ->update(['id_executor' => $request['id_new_executor']]);
+
+    	return(redirect('/employee/view_all_incoming_tickets'));
+    } 
 
 
 }

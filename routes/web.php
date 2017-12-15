@@ -63,4 +63,7 @@ Route::group(['prefix' => 'employee'], function () {
   #Route::post('/add_new_employee', 'EmployeeAuth\RegisterController@add_new_employee');
 
   #Route::post('/add_new_employee', ['as' => 'form_url', 'uses' => 'EmployeeAuth\RegisterController@add_new_employee']);
+
+
 });
+
