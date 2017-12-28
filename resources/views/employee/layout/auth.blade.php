@@ -19,6 +19,10 @@
             'csrfToken' => csrf_token(),
         ]); ?>
     </script>
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
 </head>
 <body>
     <nav class="navbar navbar-default navbar-static-top">
@@ -113,6 +117,10 @@
     <!-- Scripts -->
     <script src="/js/app.js"></script>
 </body>
+
+
+    
+
 </html>
 
 <?php 

@@ -2,7 +2,6 @@
 
 @section('content')
 
-
 <div class="row">
   <div class="col-md-12" >
     <div class="col-md-2" style="height: 300px; background-color: ;">
@@ -16,14 +15,16 @@
 
     <!-- Вывод пользователей -->
     <div class="col-md-9 ">
-      <b>На этой странице ({{   $tickets->count()}} заявок)</b>
       <h2>Входящие заявки</h2>
+      <b>На этой странице ({{   $tickets->count()}} заявок)</b>
+      </br>
+      </br>
       <table class="table table-striped table-bordered">
         <thead>
           <tr>
             <th>#</th>
             <th>Тема</th>
-            <th>От кого?</th>
+            <th>Инициатор</th>
             <th class="col-md-2">Дата создания</th>
             <th class="col-md-3">Исполнитель</th>
             <th>Статус</th>
@@ -66,7 +67,23 @@
                   @endif
                 </td>
                 <td>{{ $ticket->current_status_name }}</td>
-                <td></td>
+                <td>
+                  <form method="get" action="">
+                    <input type="hidden" name="id_record" value="{{ $ticket->id }}">
+
+                    <a href="/employee/reject_ticket/{{$ticket->id}}" class="btn btn-danger btn-sm">
+                      <span class="glyphicon glyphicon-remove"></span>                     
+                    </a>
+
+                  <a href="/employee/more_info_ticket/{{$ticket->id}}" class="btn btn-info btn-sm">
+                    <span class="glyphicon glyphicon-info-sign"></span>
+                  </a>
+
+                  <a href="/employee/reopen_ticket/{{$ticket->id}}" class="btn btn-warning btn-sm">
+                    <span class="glyphicon glyphicon-retweet"></span>
+                  </a>
+                  </form>
+                </td>
                 </tr>
                   @empty
                     <p>Нет входящих заявок.</p>

@@ -16,12 +16,17 @@ use Illuminate\Support\Facades\Auth;
 
 class CRUDController extends Controller
 {
+	#
+	# Shows management form
+	#
 	public function showManagementForm ()
 	{
 		return view('employee.manage');
 	}
 
-
+	#
+	# Create new employee
+	#
 	protected function add_new_employee(Request $request)
     {
         Employee::create([
@@ -45,7 +50,9 @@ class CRUDController extends Controller
         #return Employee::create($request->all());
     }
 
-    // Add new unit
+	#
+    # Add new unit
+    #
     protected function add_new_unit(Request $request)
     {
         Unit::create([
@@ -56,6 +63,9 @@ class CRUDController extends Controller
         return(redirect('/employee/company_units'));   
     }
 
+    #
+    # This func create ticket
+    #
     protected function create_ticket(Request $request)
     {
     	Ticket::create([
@@ -72,14 +82,18 @@ class CRUDController extends Controller
     	return(redirect('/employee/outgoing_tickets'));
     }
 
+
+    #
     # this function gets all incoming tickets related to user
+    #
     protected function getAllIncomingTickets()
     {
     	# This query selects all tickets related to head unit
 		if (Auth::user()->head_unit_id != NULL) {
-			$tickets = DB::table('employee_tickets')
+			$tickets = DB::table('employee_tickets')		
 				->where('id_company', Auth::user()->id_company)
-				->where('unit_to_id', Auth::user()->head_unit_id)
+				->where('id_status', '<>', 2)
+				->where('unit_to_id', Auth::user()->head_unit_id)		
 				->get();
 
 		# This query selects all employees of single unit
@@ -101,45 +115,15 @@ class CRUDController extends Controller
 		$current_executor = [];
 		$current_employee_init_name = "";
 		$i=0;
+
 		foreach($tickets as $ticket) {
 			
-			$current_executor_name = DB::table('employees')
-				->where('id', $ticket->id_executor)
-				->select('name')
-				->get();
-
-			#this loop gets exatcly the name string from object
-			# which was recieved above
-			$tmpExecutorName = "Нет исполнителя";
-			$tmpCurrentStatusName = NULL;
-			foreach ($current_executor_name as $tmp) {
-				$tmpExecutorName = $tmp->name;
-			}
-
-			# this piece of code selects employee init name by id from ticket
-			$current_employee_init_name = DB::table('employees')
-				->where('id', $ticket->employee_init_id)
-				->select('name')
-				->get();
-
-			foreach ($current_employee_init_name as $tmp) {
-				$tmpEmployeeInitName = $tmp->name;
-			}
-
-			#get status name
-			$current_status_name = DB::table('statuses')
-				->where('id', $ticket->id_status)
-				->select('name')
-				->get();
-
-			foreach ($current_status_name as $tmp) {
-				$tmpCurrentStatusName = $tmp->name;
-			}
-			
+			$tmpExecutorName = self::getExecutorName($ticket->id_executor);
+			$tmpEmployeeInitName = self::getEmployeeInitName($ticket->employee_init_id);
+			$tmpCurrentStatusName = self::getStatusName($ticket->id_status);
 			
 			$tickets[$i]->current_employee_init_name = $tmpEmployeeInitName;
 			$tickets[$i]->current_executor_name = $tmpExecutorName;
-
 			$tickets[$i]->current_status_name = $tmpCurrentStatusName;
 			$i++;
 			
@@ -152,6 +136,21 @@ class CRUDController extends Controller
     
     }
 
+    #
+    # This func checks ticket's status & if it's <> 0 it will set status 3
+    #
+    public function checkTicketStatus($id_ticket)
+    {
+
+    	DB::table('employee_tickets')
+    		->where('id', $id_ticket)
+    		->having('id_executor', '>', 0)
+    		->update(['id_status' => 3]);
+    }
+
+    #
+    # This func appoint exeecutor to the ticket
+    #
     protected function appointExecutorToTicket(Request $request)
     {
     	$id = $request['id_ticket'];
@@ -161,8 +160,174 @@ class CRUDController extends Controller
             ->where('id', $id)
             ->update(['id_executor' => $request['id_new_executor']]);
 
+        # вызов функции для автоматической проверки и изменения статуса   
+        self::checkTicketStatus($id);
+    	
     	return(redirect('/employee/view_all_incoming_tickets'));
-    } 
+    }
 
+    #
+    # This function makes rejection of ticket by setting status 2
+	#
+	protected function rejectTicket($id)
+	{
+		(int) $id;
+		$recordToUpdate = Ticket::findOrFail($id);
+		DB::table('employee_tickets')
+            ->where('id', $id)
+            ->update(['id_status' => 2]);
 
+        return(redirect('/employee/view_all_incoming_tickets'));
+	}
+
+	#
+    # This function show additional info about ticket
+	#
+	protected function moreInfoTicket($id)
+	{
+		(int) $id;
+		#$recordToUpdate = Ticket::findOrFail($id);
+		
+
+		$ticketInfo = DB::table('employee_tickets')
+            ->where('id', $id)
+            ->get();
+
+        
+
+        foreach ($ticketInfo as $ticket) {
+        	$executorName = self::getExecutorName($ticket->id_executor);
+        	$statusName = self::getStatusName($ticket->id_status);
+
+        }
+
+        # get prio name
+        $priority = self::getPriority($ticket->id_priority);
+        foreach ($priority as $prio) {
+        	$prioName = $prio->name;
+        }
+
+        # get unit name
+        $allUnits = self::getUnits($ticket->unit_to_id);
+        foreach ($allUnits as $unit) {
+        	$unitName = $unit->name;
+        }
+
+        # get employee init name
+        $allEmployyes = self::getAllEmployees($ticket->employee_init_id);
+        foreach ($allEmployyes as $employee) {
+        	$employeeName = $employee->name;
+        }
+
+        
+
+        return view('employee.tickets.more_info_ticket')
+        			->with('ticketInfo', $ticketInfo)
+        			->with('statusName', $statusName)
+        			->with('prioName', $prioName)
+        			->with('unitName', $unitName)
+        			->with('employeeName', $employeeName)
+        			->with('executorName', $executorName);
+	}
+
+	#
+    # This function reopen ticket
+	#
+	protected function reopenTicket($id)
+	{
+		(int) $id;
+		$recordToUpdate = Ticket::findOrFail($id);
+		DB::table('employee_tickets')
+            ->where('id', $id)
+            ->update(['id_status' => 1, 'id_executor' => NULL]);
+
+        return(redirect('/employee/view_all_incoming_tickets'));
+	}
+     
+	#######################################################################
+	#############			 Functions helpers				  ############
+	######################################################################
+	
+	#
+	# get executor name
+	#
+	protected function getExecutorName($id)
+    {
+    	$current_executor_name = DB::table('employees')
+				->where('id', $id)
+				->select('name')
+				->get();
+
+		#this loop gets exatcly the name string from object
+		# which was recieved above
+		$tmpExecutorName = "Нет исполнителя";
+		$tmpCurrentStatusName = NULL;
+		foreach ($current_executor_name as $tmp) {
+			$tmpExecutorName = $tmp->name;
+		}
+		return $tmpExecutorName;
+    }
+
+    #
+    # Get employee init name
+    #
+    protected function getEmployeeInitName($id)
+    {
+    	$current_employee_init_name = DB::table('employees')
+    		->where('id', $id)
+    		->select('name')
+    		->get();
+
+    	foreach ($current_employee_init_name as $tmp) {
+    		$tmpEmployeeInitName = $tmp->name;
+    	}
+    	return $tmpEmployeeInitName;
+    }
+
+    #
+    # get status name
+    #
+    protected function getStatusName($id) 
+    {
+		$current_status_name = DB::table('statuses')
+			->where('id', $id)
+			->select('name')
+			->get();
+
+		foreach ($current_status_name as $tmp) {
+			$tmpCurrentStatusName = $tmp->name;
+		}
+
+		return $tmpCurrentStatusName;
+	}
+
+	#
+	# get priority. It returns prioritu object with all fields
+	#
+	private function getPriority($id)
+	{
+		return DB::table('priorities')
+				->where('id', $id)
+				->get();
+	}
+
+	#
+	# get all units
+	#
+	protected function getUnits($id)
+	{
+		return DB::table('units')
+				->where('id', $id)
+				->get();
+	}
+
+	#
+	# get all employees
+	#
+	protected function getAllEmployees($id)
+	{
+		return DB::table('employees')
+				->where('id', $id)
+				->get();
+	}
 }

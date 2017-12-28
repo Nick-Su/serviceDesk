@@ -1,5 +1,4 @@
 <?php
-
 Route::get('/home', function () {
     $users[] = Auth::user();
     $users[] = Auth::guard()->user();
@@ -59,18 +58,25 @@ Route::get('/create_ticket', function () {
 # View all incoming tickets
 Route::get('/view_all_incoming_tickets', 'EmployeeManagement\CRUDController@getAllIncomingTickets');
 
-
-
+# Appoint executor to ticket
 Route::get('/appoint_executor_to_ticket', 'EmployeeManagement\CRUDController@appointExecutorToTicket');
+
+# Reject ticekt
+Route::get('/reject_ticket/{ticket}', 'EmployeeManagement\CRUDController@rejectTicket');
+
+# Detailed info about ticket
+Route::get('/more_info_ticket/{ticket}', 'EmployeeManagement\CRUDController@moreInfoTicket');
+
+# Reopen ticket
+Route::get('/reopen_ticket/{ticket}', 'EmployeeManagement\CRUDController@reopenTicket');
+
 
 # View outgoing tickets
 Route::get('/outgoing_tickets', function () {
 	return view('employee.tickets.outgoing_tickets');
 });
 
-Route::get('/ticket_more_info', function () {
 
-});
 
 Route::get('/tickets_archieve', function(){
 	return view('employee.tickets.view_archieved_tickets');
