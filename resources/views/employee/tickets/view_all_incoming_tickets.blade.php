@@ -4,7 +4,7 @@
 
 <div class="row">
   <div class="col-md-12" >
-    <div class="col-md-2" style="height: 300px; background-color: ;">
+    <div class="col-md-2" style="height: 300px; margin-top: 7.5em;">
       <ul class="list-group">
         <li class="list-group-item"><a href="{{ url('/employee/create_ticket') }}"> Создать заявку </a></li>
         <li class="list-group-item"><a href="">Входящие заявки</a></li>
@@ -63,26 +63,45 @@
                     </div>
                   </div>
                 @else 
-                  {{ $ticket->id_executor }}
-                  @endif
+                    <!-- If the user is an executor, not a head unit -->
+                    {{ $ticket->current_executor_name }}
+                @endif
                 </td>
                 <td>{{ $ticket->current_status_name }}</td>
                 <td>
+                  <!-- If the user is a head unit -->
+                  @if (Auth::user()->head_unit_id != NULL)
                   <form method="get" action="">
                     <input type="hidden" name="id_record" value="{{ $ticket->id }}">
 
                     <a href="/employee/reject_ticket/{{$ticket->id}}" class="btn btn-danger btn-sm">
-                      <span class="glyphicon glyphicon-remove"></span>                     
+                      <span class="glyphicon glyphicon-remove" title="Отклонить заявку"></span>                     
                     </a>
 
                   <a href="/employee/more_info_ticket/{{$ticket->id}}" class="btn btn-info btn-sm">
-                    <span class="glyphicon glyphicon-info-sign"></span>
+                    <span class="glyphicon glyphicon-info-sign" title="Подробная информация о заявке"></span>
                   </a>
 
                   <a href="/employee/reopen_ticket/{{$ticket->id}}" class="btn btn-warning btn-sm">
-                    <span class="glyphicon glyphicon-retweet"></span>
+                    <span class="glyphicon glyphicon-retweet" title="Переоткрыть заявку"></span>
                   </a>
                   </form>
+                  @else
+                    <a href="/employee/take_the_ticket/{{$ticket->id}}" class="btn btn-primary btn-sm">
+                      <span class="glyphicon glyphicon-hourglass" title="Отметить заявку как выполняемую"></span>                     
+                    </a>
+                    <a href="/employee/refuse_the_ticket/{{$ticket->id}}" class="btn btn-danger btn-sm">
+                      <span class="glyphicon glyphicon-ban-circle" title="Отказаться от заявки"></span>                     
+                    </a>
+
+                    <a href="/employee/more_info_ticket/{{$ticket->id}}" class="btn btn-info btn-sm">
+                      <span class="glyphicon glyphicon-info-sign" title="Подробная информация о заявке"></span>
+                    </a>
+
+                    <a href="/employee/ticket_complete/{{$ticket->id}}" class="btn btn-success btn-sm">
+                      <span class="glyphicon glyphicon-ok-circle" title="Отметить заявку как выполненную"></span>                     
+                    </a>  
+                  @endif
                 </td>
                 </tr>
                   @empty

@@ -62,10 +62,31 @@ class CRUDController extends Controller
 
         return(redirect('/employee/company_units'));   
     }
+    /////////////////////////////////////////
+    #		Ticket functions
+    /////////////////////////////////////////////
+    
+    protected function showCreateTicketForm()
+    {
+    	$units = DB::table('units')->where('id_company', Auth::user()->id_company)->get();
+	
+		$employees = DB::table('employees')
+					->where('id_company', Auth::user()->id_company)
+					->where('id_unit', Auth::user()->id_unit)
+					->get();
+
+		$priorities = DB::table('priorities')->get();
+
+		return view('employee.tickets.create_ticket')
+				->with('units', $units)
+				->with('employees', $employees)
+				->with('priorities', $priorities);
+    }
+
 
     #
     # This func create ticket
-    #
+   	#
     protected function create_ticket(Request $request)
     {
     	Ticket::create([
@@ -94,7 +115,8 @@ class CRUDController extends Controller
 				->where('id_company', Auth::user()->id_company)
 				->where('id_status', '<>', 2)
 				->where('unit_to_id', Auth::user()->head_unit_id)		
-				->get();
+				->get(); 
+
 
 		# This query selects all employees of single unit
 		$employees = DB::table('employees')
@@ -135,6 +157,56 @@ class CRUDController extends Controller
 			->with('current_executor', $current_executor);
     
     }
+
+    #
+    # This func gets all outgoing tickets
+    #
+    protected function getAllOutgoingTickets()
+    {
+    	# This query selects all tickets related to head unit
+		
+		# This query selects all tickets related to head unit
+		
+		$tickets = DB::table('employee_tickets')		
+			->where('id_company', Auth::user()->id_company)
+			->where('id_status', '<>', 2)
+			->where('employee_init_id', Auth::user()->id)		
+			->get(); 
+
+
+		# This query selects all employees of single unit
+		$employees = DB::table('employees')
+			->where('id_company', Auth::user()->id_company)
+			->where('id_unit', Auth::user()->head_unit_id)
+			->get();
+
+		
+
+		# This algorithm select the name of current executor by id
+		$current_executor = [];
+		$current_employee_init_name = "";
+		$i=0;
+
+		foreach($tickets as $ticket) {
+			
+			$tmpExecutorName = self::getExecutorName($ticket->id_executor);
+			$tmpEmployeeInitName = self::getEmployeeInitName($ticket->employee_init_id);
+			$tmpCurrentStatusName = self::getStatusName($ticket->id_status);
+			
+			$tickets[$i]->current_employee_init_name = $tmpEmployeeInitName;
+			$tickets[$i]->current_executor_name = $tmpExecutorName;
+			$tickets[$i]->current_status_name = $tmpCurrentStatusName;
+			$i++;
+			
+		} 
+
+		return view('employee.tickets.outgoing_tickets')
+				->with('tickets', $tickets)
+				->with('employees', $employees);
+			#->with('current_executor', $current_executor);
+		
+    }
+
 
     #
     # This func checks ticket's status & if it's <> 0 it will set status 3
@@ -186,19 +258,14 @@ class CRUDController extends Controller
 	protected function moreInfoTicket($id)
 	{
 		(int) $id;
-		#$recordToUpdate = Ticket::findOrFail($id);
 		
-
 		$ticketInfo = DB::table('employee_tickets')
             ->where('id', $id)
             ->get();
 
-        
-
         foreach ($ticketInfo as $ticket) {
         	$executorName = self::getExecutorName($ticket->id_executor);
         	$statusName = self::getStatusName($ticket->id_status);
-
         }
 
         # get prio name
@@ -218,8 +285,6 @@ class CRUDController extends Controller
         foreach ($allEmployyes as $employee) {
         	$employeeName = $employee->name;
         }
-
-        
 
         return view('employee.tickets.more_info_ticket')
         			->with('ticketInfo', $ticketInfo)
@@ -243,11 +308,106 @@ class CRUDController extends Controller
 
         return(redirect('/employee/view_all_incoming_tickets'));
 	}
+
+	#
+	# This func marks ticket as processing
+	#
+	protected function takeTheTicket($id)
+	{
+		(int) $id;
+		$recordToUpdate = Ticket::findOrFail($id);
+		DB::table('employee_tickets')
+            ->where('id', $id)
+            ->update(['id_status' => 4]);
+
+        return(redirect('/employee/view_all_incoming_tickets'));
+	}
+
+	#
+	# This func refuse the ticket
+	#
+	protected function refuseTheTicket($id)
+	{
+		(int) $id;
+		$recordToUpdate = Ticket::findOrFail($id);
+		DB::table('employee_tickets')
+            ->where('id', $id)
+            ->update(['id_executor' => NULL, 'id_status' => 1]);
+
+        return(redirect('/employee/view_all_incoming_tickets'));
+	}
+
+	#
+	# This func marks ticket as completed by executor
+	#
+	protected function ticketComplete($id)
+	{
+		(int) $id;
+		$recordToUpdate = Ticket::findOrFail($id);
+		DB::table('employee_tickets')
+            ->where('id', $id)
+            ->update(['confirmed_by_executor' => True, 'id_status' => 5]);
+
+        self::checkTicketBothConfiramtion($id);
+
+        return(redirect('/employee/view_all_incoming_tickets'));
+	}
      
+	protected function ticketCompleteByInitiator($id)
+	{
+		(int) $id;
+		$recordToUpdate = Ticket::findOrFail($id);
+		DB::table('employee_tickets')
+            ->where('id', $id)
+            ->update(['confirmed_by_initiator' => True, 'id_status' => 6]);
+
+        self::checkTicketBothConfiramtion($id);
+
+        return(redirect('/employee/outgoing_tickets'));
+	}
+
+	protected function ticketIsNotComplete($id)
+	{
+		(int) $id;
+		$recordToUpdate = Ticket::findOrFail($id);
+		DB::table('employee_tickets')
+            ->where('id', $id)
+            ->update(['id_status' => 1, 'id_executor' => NULL]);
+
+        return(redirect('/employee/outgoing_tickets'));
+	}
+
 	#######################################################################
 	#############			 Functions helpers				  ############
 	######################################################################
-	
+
+	#
+	#	This func check executor & initiator confirmation & and if both
+	#	confirmed, it close the ticket.
+	#
+	protected function checkTicketBothConfiramtion($id)
+	{	
+		(int) $id;
+		$recordToUpdate = Ticket::findOrFail($id);
+		$tmpValues = DB::table('employee_tickets')
+            ->where('id', $id)
+            ->select('confirmed_by_executor', 'confirmed_by_initiator')
+            ->get();
+        
+        foreach ($tmpValues as $value) {
+            	if( $value->confirmed_by_executor == 1 && $value->confirmed_by_initiator == 1)
+            	{
+            		DB::table('employee_tickets')
+			            ->where('id', $id)
+			            ->update(['id_status' => 7]);
+            	}
+            }    
+
+
+     
+		return;
+	}
+
 	#
 	# get executor name
 	#

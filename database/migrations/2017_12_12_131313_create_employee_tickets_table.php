@@ -15,7 +15,7 @@ class CreateEmployeeTicketsTable extends Migration
     {
         Schema::create('employee_tickets', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamps();
+            $table->string('id_company')->nullable();
 
             $table->integer('employee_init_id')->nullable();
             $table->integer('unit_to_id')->nullable();
@@ -24,8 +24,10 @@ class CreateEmployeeTicketsTable extends Migration
             $table->string('subject')->nullable();
             $table->string('description')->nullable();
             $table->integer('id_status')->nullable();
-            $table->integer('locked_by')->nullable();
-            $table->string('id_company')->nullable();
+            $table->boolean('confirmed_by_executor')->nullable();
+            $table->boolean('confirmed_by_initiator')->nullable();
+
+            $table->timestamps();
         });
     }
 
