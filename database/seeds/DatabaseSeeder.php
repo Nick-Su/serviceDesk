@@ -69,5 +69,19 @@ class DatabaseSeeder extends Seeder
             'email' => 'test1@test.com',
             'password' => bcrypt('123456'),
         ]);
+
+
+        # Priorities
+        DB::table('priorities')->insert([
+            'name' => 'Низкий',
+        ]);
+
+        DB::table('priorities')->insert([
+            'name' => 'Средний',
+        ]);
+
+        DB::table('priorities')->insert([
+            'name' => 'Высокий',
+        ]);
     }
 }

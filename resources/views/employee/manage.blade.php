@@ -10,14 +10,14 @@
             
             <div class="col-md-3" style="height: 300px; background-color: ;">
                 <ul class="list-group">
-                    <li class="list-group-item"><a href="{{ url('/employee/create_employee') }}"> Создать пользователя </a></li>
+                    <li class="list-group-item"><a href="/employee/create_employee"> Создать пользователя </a></li>
                     <li class="list-group-item"><a href="">Просмотр всех пользователей</a></li>
                 </ul>
             </div>
 
         <!-- Вывод пользователей -->
         <div class="col-md-6 ">
-            <b>In this page ({{   $users->count()}} users)</b>
+            <b>In this page ({{ $users->count()}} users)</b>
             <ul class="list-group">
                 @forelse($users as $user)
                     <li class="list-group-item" style="margin-top: 20px;">

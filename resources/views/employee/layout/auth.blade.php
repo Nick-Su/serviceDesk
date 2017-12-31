@@ -76,7 +76,7 @@
 
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ url('/employee/management') }}">Управление сотрудникими</a></li>
-                                <li><a href="{{ url('/employee/company_profile') }}">Профиль компании</a></li>
+                                <li><a href="{{ url('/employee/about_company') }}">Профиль компании</a></li>
                                 <li><a href="{{ url('/employee/company_units') }}">Отделы</a></li>
                             </ul>
                         </li>
@@ -88,7 +88,7 @@
 
                             <ul class="dropdown-menu" role="menu">
                                 
-                                <li><a href="">Мой профиль</a></li>
+                                <li><a href="/employee/my_profile">Мой профиль</a></li>
 
                                 <li>
 

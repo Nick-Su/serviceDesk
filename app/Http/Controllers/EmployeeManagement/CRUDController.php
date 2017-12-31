@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Employee;
 use App\Unit;
 use App\Ticket;
+use App\Company;
+
 use DB;
 use Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -28,22 +30,22 @@ class CRUDController extends Controller
 	# Create new employee
 	#
 	protected function add_new_employee(Request $request)
-    {
+    {    	
         Employee::create([
             'name' => $request['name'],
             'email' => $request['email'],
             'password' => bcrypt($request['password']),
             'phone_number' => $request['phone_number'],
             
-            'priv_add_employee' => $request['priv_add_employee'],
-            'priv_edit_employee' => $request['priv_edit_employee'], 
-            'priv_delete_employee' => $request['priv_delete_employee'], 
+            #'priv_add_employee' => $request['priv_add_employee'],
+            #'priv_edit_employee' => $request['priv_edit_employee'], 
+            #'priv_delete_employee' => $request['priv_delete_employee'], 
             'head_unit_id' => '',
             'id_unit' => $request['id_unit'],
             'head_unit_id' => $request['head_unit_id'],      
             'room' => $request['room'],               
             'id_company' => $request['id_company'], 
-            'id_role' => 2, 
+            'id_role' => $request['id_role'], 
         ]);
 
         return(redirect('/employee/management'));
@@ -55,6 +57,12 @@ class CRUDController extends Controller
     #
     protected function add_new_unit(Request $request)
     {
+    	if (Auth::user()->id_role <> 0)
+    	{
+    		return(redirect('/employee/home'));
+    	}
+
+
         Unit::create([
             'name' => $request['name'],               
             'id_company' => $request['id_company'], 
@@ -62,6 +70,27 @@ class CRUDController extends Controller
 
         return(redirect('/employee/company_units'));   
     }
+
+    protected function fillCompanyInfo(Request $request)
+    {
+    	if (Auth::user()->id_role != 1)
+    	{
+    		return(redirect('/employee/home'));
+    	}
+
+    	Company::create([
+            'name' => $request['name'],               
+            'address' => $request['address'], 
+            'email' => $request['email'],
+            'tel' => $request['tel'],
+            'description' => $request['description'],
+            'external_tickets' => $request['allow_external_tickets'],
+            'id_company' => $request['id_company'],
+        ]);
+
+        return(redirect('/employee/home')); 
+    }
+
     /////////////////////////////////////////
     #		Ticket functions
     /////////////////////////////////////////////
@@ -114,6 +143,7 @@ class CRUDController extends Controller
 			$tickets = DB::table('employee_tickets')		
 				->where('id_company', Auth::user()->id_company)
 				->where('id_status', '<>', 2)
+				->where('id_status', '<>', 7)
 				->where('unit_to_id', Auth::user()->head_unit_id)		
 				->get(); 
 
@@ -170,6 +200,7 @@ class CRUDController extends Controller
 		$tickets = DB::table('employee_tickets')		
 			->where('id_company', Auth::user()->id_company)
 			->where('id_status', '<>', 2)
+			->where('id_status', '<>', 7)
 			->where('employee_init_id', Auth::user()->id)		
 			->get(); 
 
@@ -376,6 +407,13 @@ class CRUDController extends Controller
 
         return(redirect('/employee/outgoing_tickets'));
 	}
+
+	protected function showMyProfile()
+	{
+		return view('employee.my_profile');
+	}
+
+
 
 	#######################################################################
 	#############			 Functions helpers				  ############

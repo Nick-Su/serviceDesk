@@ -127,9 +127,18 @@
                                 <input id="room" type="text" class="form-control" name="room" required>
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label for="role" class="col-md-4 control-label">
+                                Сотрудник имеет права администратора
+                            </label>
+                            <div class="col-md-6">
+                                <input id="role" type="checkbox" name="id_role" value="1" class="form-control">
+                            </div>
+                        </div>
                         
                         <!-- Priv field -->
-                        <div class="form-group">
+                       <!-- <div class="form-group">
                             <label for="priv_add_employee" class="col-md-4 control-label">Разрешить добавление сотрудников</label>
                             <div class="col-md-6">
                                 <input id="priv_add_employee" type="checkbox" class="form-control" name="priv_add_employee"  value="1">
@@ -148,7 +157,7 @@
                             <div class="col-md-6">
                                 <input id="priv_delete_employee" type="checkbox" class="form-control" name="priv_delete_employee" value="1">
                             </div>
-                        </div>
+                        </div> -->
                         
                         <!-- Generate Token -->
                         <div class="form-group">

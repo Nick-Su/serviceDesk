@@ -8,6 +8,9 @@ Route::get('/home', function () {
 })->name('home');
 
 
+####################################
+# Company Administration section
+###################################
 Route::get('/management', function () {
     $users[] = Auth::user();
     $users[] = Auth::guard()->user();
@@ -16,13 +19,16 @@ Route::get('/management', function () {
     return view('employee.manage');
 }); 
 
-Route::get('/create_employee', function () {
-	$units = DB::table('units')->where('id_company', Auth::user()->id_company)->get();
-    return view('employee.create')->with('units', $units);
-});
+Route::get('/create_employee', [
+	'middleware' => 'isAdmin', 
+	function () {
+		$units = DB::table('units')->where('id_company', Auth::user()->id_company)->get();
+    	
+    	return view('employee.create')->with('units', $units);
+}]);
 
-Route::get('/company_profile', function () {
-    return view('employee.company.profile');
+Route::get('/about_company', function () {
+    return view('employee.company.about_company');
 });
 
 Route::get('/company_units', function () {
@@ -34,6 +40,18 @@ Route::get('/company_units', function () {
 Route::get('/add_unit', function () {
     return view('employee.company.add_unit');
 });
+
+Route::get('/my_profile', 'EmployeeManagement\CRUDController@showMyProfile');
+
+Route::post('/add_new_employee', 'EmployeeManagement\CRUDController@add_new_employee');
+
+Route::post('/add_new_unit', 'EmployeeManagement\CRUDController@add_new_unit');
+
+Route::post('/fill_company_info', 'EmployeeManagement\CRUDController@fillCompanyInfo');
+#
+# Company administration section ends here
+#
+
 
 ##############################################
 ###### 		Work with tickets 		##########
@@ -50,9 +68,8 @@ Route::get('/outgoing_tickets', 'EmployeeManagement\CRUDController@getAllOutgoin
 # Appoint executor to ticket
 Route::get('/appoint_executor_to_ticket', 'EmployeeManagement\CRUDController@appointExecutorToTicket');
 
-#
+
 # Actions to ticket buttons
-#
 
 # Reject ticekt
 Route::get('/reject_ticket/{ticket}', 'EmployeeManagement\CRUDController@rejectTicket');
@@ -83,11 +100,13 @@ Route::get('/tickets_archieve', function(){
 });
 
 Route::post('/create_ticket', 'EmployeeManagement\CRUDController@create_ticket');
-#############################################
-###### Work with tickets ends here ##########
-#############################################
+#
+# Tickets' routes ends here
+#
 
 
-Route::post('/add_new_employee', 'EmployeeManagement\CRUDController@add_new_employee');
 
-Route::post('/add_new_unit', 'EmployeeManagement\CRUDController@add_new_unit');
+#  Route Protection
+Route::get('/permission_denied', function(){
+  return view('employee.permission_denied');
+});
