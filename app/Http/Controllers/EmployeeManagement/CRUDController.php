@@ -71,24 +71,78 @@ class CRUDController extends Controller
         return(redirect('/employee/company_units'));   
     }
 
+    #
+    # Show About Company page and its info
+    #
+    protected function showAboutCompanyForm()
+    {
+    	$about_info = DB::table('about_company')
+					->where('id_company', Auth::user()->id_company)
+					->get();
+
+		$tmpCompanyName = NULL;
+		$tmpAddress = NULL;
+		$tmpEmail = NULL;
+		$tmpTel = NULL;
+		$tmpDescription = NULL;
+		$isChecked = NULL;
+
+		foreach($about_info as $info) {
+			$tmpCompanyName = $info->name;
+			$tmpAddress = $info->address;
+			$tmpEmail = $info->email;
+			$tmpTel = $info->tel;
+			$tmpDescription = $info->description;
+			$info->external_tickets == 1 ? $isChecked = "checked" : $isChecked = NULL;
+		}
+
+
+
+    	return view('employee.company.about_company')
+    				->with('name', $tmpCompanyName)
+    				->with('address', $tmpAddress)
+    				->with('email', $tmpEmail)
+    				->with('tel', $tmpTel)
+    				->with('description', $tmpDescription)
+    				->with('isChecked', $isChecked);
+    }
+
+    #
+    # Adds company discription to DB
+	#
     protected function fillCompanyInfo(Request $request)
     {
-    	if (Auth::user()->id_role != 1)
-    	{
-    		return(redirect('/employee/home'));
+    	$id_company = Auth::user()->id_company;
+    	
+    	# find the target record
+    	$about_info = DB::table('about_company')
+					->where('id_company', $id_company)
+					->select('id_company')
+					->get();
+		# save the id_company value in a variable
+		foreach ($about_info as $key) {
+			$isExist = $key->id_company;
+		}
+
+		if ($isExist == $id_company) {			
+			# if the record with the target id_company exist, run update func
+    		self::UpdateCompanyInfo($request, $id_company);
+    	} else {
+    		# otherwise run creation script
+    		$request['external_tickets'] == 1 ? $isChecked = 1 : $isChecked = 0;
+
+    		Company::create([
+	            'name' => $request['name'],               
+	            'address' => $request['address'], 
+	            'email' => $request['email'],
+	            'tel' => $request['tel'],
+	            'description' => $request['description'],
+	            'external_tickets' => $isChecked,
+	            'id_company' => $request['id_company'],
+        	]);
     	}
 
-    	Company::create([
-            'name' => $request['name'],               
-            'address' => $request['address'], 
-            'email' => $request['email'],
-            'tel' => $request['tel'],
-            'description' => $request['description'],
-            'external_tickets' => $request['allow_external_tickets'],
-            'id_company' => $request['id_company'],
-        ]);
-
-        return(redirect('/employee/home')); 
+        return(redirect('/employee/about_company')); 
     }
 
     /////////////////////////////////////////
@@ -441,8 +495,6 @@ class CRUDController extends Controller
             	}
             }    
 
-
-     
 		return;
 	}
 
@@ -527,5 +579,27 @@ class CRUDController extends Controller
 		return DB::table('employees')
 				->where('id', $id)
 				->get();
+	}
+
+	#
+	# updates about_company record
+	#
+	protected function UpdateCompanyInfo(Request $request, $id_company)
+	{
+		$request['external_tickets'] == 1 ? $isChecked = 1 : $isChecked = 0;
+
+		DB::table('about_company')
+			->where('id_company', $id_company)
+
+			->update([
+				'name' => $request['name'], 
+				'address' => $request['address'],  
+				'email' => $request['email'],
+				'tel' => $request['tel'],
+				'description' => $request['description'],
+				'external_tickets' => $isChecked 
+			]);            
+		
+		return(redirect('/employee/about_company')); ;
 	}
 }

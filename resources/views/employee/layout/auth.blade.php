@@ -68,18 +68,21 @@
                             </ul>
                         </li>
     
+                         @if(  Auth::user()->id_role == 1  )
+                            <li class="dropdown">
+                                <a href="#"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                    Администрирование <span class="caret"></span>
+                                </a>
 
-                        <li class="dropdown">
-                            <a href="#"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                                Администрирование <span class="caret"></span>
-                            </a>
-
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ url('/employee/management') }}">Управление сотрудникими</a></li>
-                                <li><a href="{{ url('/employee/about_company') }}">Профиль компании</a></li>
-                                <li><a href="{{ url('/employee/company_units') }}">Отделы</a></li>
-                            </ul>
-                        </li>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="{{ url('/employee/management') }}">Управление сотрудникими</a></li>
+                                    <li><a href="{{ url('/employee/about_company') }}">Профиль компании</a></li>
+                                    <li><a href="{{ url('/employee/company_units') }}">Отделы</a></li>
+                                </ul>
+                            </li>
+                         @else 
+                            
+                         @endif
 
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">

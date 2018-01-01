@@ -11,13 +11,7 @@ Route::get('/home', function () {
 ####################################
 # Company Administration section
 ###################################
-Route::get('/management', function () {
-    $users[] = Auth::user();
-    $users[] = Auth::guard()->user();
-    $users[] = Auth::guard('employee')->user();
 
-    return view('employee.manage');
-}); 
 
 Route::get('/create_employee', [
 	'middleware' => 'isAdmin', 
@@ -27,27 +21,42 @@ Route::get('/create_employee', [
     	return view('employee.create')->with('units', $units);
 }]);
 
-Route::get('/about_company', function () {
-    return view('employee.company.about_company');
-});
+# Route protection
+Route::middleware(['isAdmin'])->group(function () {
 
-Route::get('/company_units', function () {
-	$units = DB::table('units')->where('id_company', Auth::user()->id_company)->get();
+	Route::get('/management', function () {
+	    $users[] = Auth::user();
+	    $users[] = Auth::guard()->user();
+	    $users[] = Auth::guard('employee')->user();
 
-    return view('employee.company.units')->with('units', $units);
-});
+	    return view('employee.manage');
+	}); 
 
-Route::get('/add_unit', function () {
-    return view('employee.company.add_unit');
+	Route::get('/about_company', 'EmployeeManagement\CRUDController@showAboutCompanyForm');
+
+	Route::get('/company_units', function () {
+		$units = DB::table('units')->where('id_company', Auth::user()->id_company)->get();
+
+	    return view('employee.company.units')->with('units', $units);
+	});
+
+	Route::get('/add_unit', function () {
+	    return view('employee.company.add_unit');
+	});
+
+	Route::post('/add_new_employee', 'EmployeeManagement\CRUDController@add_new_employee');
+
+	Route::post('/add_new_unit', 'EmployeeManagement\CRUDController@add_new_unit');
+
+	Route::post('/fill_company_info', 'EmployeeManagement\CRUDController@fillCompanyInfo');
+
 });
+# Route protection ends here
+
 
 Route::get('/my_profile', 'EmployeeManagement\CRUDController@showMyProfile');
 
-Route::post('/add_new_employee', 'EmployeeManagement\CRUDController@add_new_employee');
 
-Route::post('/add_new_unit', 'EmployeeManagement\CRUDController@add_new_unit');
-
-Route::post('/fill_company_info', 'EmployeeManagement\CRUDController@fillCompanyInfo');
 #
 # Company administration section ends here
 #
