@@ -6,23 +6,40 @@
   <div class="col-md-12" >
    
     <!-- Вывод компаний -->
-    <div class="col-md-9 ">
-      <h2>Входящие заявки</h2>
-      <b>На этой странице ()  компаний</b>
+    <div class="col-md-9 col-md-offset-2">
+      <h2>Доступные компании Вашего города</h2>
+      <b>На этой странице ({{ $allCompanies->count() }})  компаний</b>
       </br>
       </br>
       <table class="table table-striped table-bordered">
         <thead>
           <tr>
-            <th>#</th>
-            <th>Название</th>
+            <th class="col-xs-1">#</th>
+            <th class="col-md-2">Название</th>
             <th>Адрес</th>
             <th>Описание</th>
-            <th>Статус</th>
-            <th>Действия</th>
+            <th class="col-md-1">Действия</th>
           </tr>
         </thead>
-        <tbody> 
+        <tbody>
+        	@forelse($allCompanies as $company)
+				<tr>
+					<th>{{ $company->id }}</th>
+					<th>{{ $company->name }}</th>
+					<th>{{ $company->address }}</th>
+					<th>{{ $company->description }}</th>
+					<th>
+            			<a href="">
+                    	<button type="button" class="btn btn-success btn-sm">
+                    	    <span class="glyphicon glyphicon-plus"></span> Оставить заявку 
+                    	</button>
+                    	</a>
+					</th>
+				</tr>
+				
+        	@empty
+				<p> Компании не обнаружены </p>
+        	@endforelse 
             
               
           </tbody>

@@ -19,6 +19,11 @@ class CRUDController extends Controller
 	#
     public function showAvailableCompaniesForm ()
 	{
-		return view('individual.tickets.view_all_companies');
+		$allCompanies = DB::table('about_company')
+					->where('city', Auth::user()->city)
+					->get();
+
+		return view('individual.tickets.view_all_companies')
+				->with('allCompanies', $allCompanies);
 	}
 }
