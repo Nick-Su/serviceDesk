@@ -81,6 +81,7 @@ class CRUDController extends Controller
 					->get();
 
 		$tmpCompanyName = NULL;
+		$tmpCity = NULL;
 		$tmpAddress = NULL;
 		$tmpEmail = NULL;
 		$tmpTel = NULL;
@@ -89,6 +90,7 @@ class CRUDController extends Controller
 
 		foreach($about_info as $info) {
 			$tmpCompanyName = $info->name;
+			$tmpCity = $info->city;
 			$tmpAddress = $info->address;
 			$tmpEmail = $info->email;
 			$tmpTel = $info->tel;
@@ -100,6 +102,7 @@ class CRUDController extends Controller
 
     	return view('employee.company.about_company')
     				->with('name', $tmpCompanyName)
+    				->with('city', $tmpCity)
     				->with('address', $tmpAddress)
     				->with('email', $tmpEmail)
     				->with('tel', $tmpTel)
@@ -132,7 +135,8 @@ class CRUDController extends Controller
     		$request['external_tickets'] == 1 ? $isChecked = 1 : $isChecked = 0;
 
     		Company::create([
-	            'name' => $request['name'],               
+	            'name' => $request['name'],   
+	            'city' => $request['city'],            
 	            'address' => $request['address'], 
 	            'email' => $request['email'],
 	            'tel' => $request['tel'],
@@ -593,6 +597,7 @@ class CRUDController extends Controller
 
 			->update([
 				'name' => $request['name'], 
+				'city' => $request['city'],
 				'address' => $request['address'],  
 				'email' => $request['email'],
 				'tel' => $request['tel'],

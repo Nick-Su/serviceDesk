@@ -51,15 +51,18 @@
                         <div class="form-group">
                             <div class="col-md-8 col-md-offset-4">
                                 <button type="submit" class="btn btn-primary">
-                                    Login
+                                    Вход
                                 </button>
 
                                 <a class="btn btn-link" href="{{ url('/employee/password/reset') }}">
-                                    Forgot Your Password?
+                                   Забыли пароль?
                                 </a>
                             </div>
                         </div>
                     </form>
+
+                     <a href="/individual/login">Вход для частных клиентов</a><br>
+                    <a href="/legals/login">Вход для клиентов-организаций</a>
                 </div>
             </div>
         </div>

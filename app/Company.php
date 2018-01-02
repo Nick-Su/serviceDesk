@@ -9,6 +9,6 @@ class Company extends Model
 	protected $table = "about_company";
 
     protected $fillable = [
-        'name',  'address', 'email', 'tel', 'description', 'external_tickets', 'id_company',
+        'name', 'city', 'address', 'email', 'tel', 'description', 'external_tickets', 'id_company',
     ];
 }

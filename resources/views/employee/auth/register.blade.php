@@ -99,14 +99,17 @@
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
                                 <button type="submit" class="btn btn-primary">
-                                    Register
+                                    Зарегистрировать
                                 </button>
                             </div>
                         </div>
                     </form>
+
+                    <a href="/individual/register">Регистрация частных клиентов</a><br>
+                    <a href="/legals/register">Регистрация клиентов-организаций</a>
                 </div>
             </div>
-        </div>
+        </div>       
     </div>
 </div>
 @endsection

@@ -10,3 +10,6 @@ Route::get('/home', function () {
     return view('individual.home');
 })->name('home');
 
+
+
+Route::get('/create_ticket', 'IndividualManagement\CRUDController@showAvailableCompaniesForm');

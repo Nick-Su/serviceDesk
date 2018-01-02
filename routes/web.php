@@ -16,6 +16,7 @@ Route::get('/', function () {
 });
 
 Route::group(['prefix' => 'individual'], function () {
+  
   Route::get('/login', 'IndividualAuth\LoginController@showLoginForm')->name('login');
   Route::post('/login', 'IndividualAuth\LoginController@login');
   Route::post('/logout', 'IndividualAuth\LoginController@logout')->name('logout');
@@ -27,6 +28,15 @@ Route::group(['prefix' => 'individual'], function () {
   Route::post('/password/reset', 'IndividualAuth\ResetPasswordController@reset')->name('password.email');
   Route::get('/password/reset', 'IndividualAuth\ForgotPasswordController@showLinkRequestForm')->name('password.reset');
   Route::get('/password/reset/{token}', 'IndividualAuth\ResetPasswordController@showResetForm');
+
+  Route::get('/register', function () {
+    return view('individual.auth.register');
+  });
+
+  Route::get('/login', function () {
+    return view('individual.auth.login');
+  });
+
 });
 
 Route::group(['prefix' => 'legal'], function () {

@@ -52,12 +52,25 @@
                         <li><a href="{{ url('/individual/login') }}">Login</a></li>
                         <li><a href="{{ url('/individual/register') }}">Register</a></li>
                     @else
+                        <li class="dropdown"> 
+                             <a href="#"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                Мои заявки <span class="caret"></span>
+                            </a>
+
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ url('/individual/create_ticket') }}">Создать заявку</a></li>
+                                <li><a href="{{ url('/employee/outgoing_tickets') }}">Исходящие заявки</a></li>
+                            </ul>
+                        </li>
+
+
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                 {{ Auth::user()->name }} <span class="caret"></span>
                             </a>
 
                             <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ url('/employee/outgoing_tickets') }}">Мой профиль</a></li>
                                 <li>
                                     <a href="{{ url('/individual/logout') }}"
                                         onclick="event.preventDefault();

@@ -5,7 +5,7 @@ namespace App;
 use App\Notifications\IndividualResetPassword;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
+use App\Http\Controllers\IndividualManagement;
 class Individual extends Authenticatable
 {
     use Notifiable;
@@ -16,7 +16,7 @@ class Individual extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 
+        'name', 'email', 'password', 'city', 'address', 'phone_number',
     ];
 
     /**

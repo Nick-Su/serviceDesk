@@ -20,6 +20,14 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="city" class="col-md-4 control-label">Город</label>
+
+                            <div class="col-md-6">
+                                <input id="city" type="text" class="form-control" name="city" value="{{ $city }}" required autofocus">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label for="address" class="col-md-4 control-label">Адрес</label>
 
                             <div class="col-md-6">
