@@ -70,7 +70,7 @@
                             </a>
 
                             <ul class="dropdown-menu" role="menu">
-                                <li><a href="{{ url('/employee/outgoing_tickets') }}">Мой профиль</a></li>
+                                <li><a href="{{ url('/individual/my_profile') }}">Мой профиль</a></li>
                                 <li>
                                     <a href="{{ url('/individual/logout') }}"
                                         onclick="event.preventDefault();

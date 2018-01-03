@@ -29,7 +29,7 @@
 					<th>{{ $company->address }}</th>
 					<th>{{ $company->description }}</th>
 					<th>
-            			<a href="">
+            			<a href="/individual/create_ticket_form/{{ $company->id_company }}">
                     	<button type="button" class="btn btn-success btn-sm">
                     	    <span class="glyphicon glyphicon-plus"></span> Оставить заявку 
                     	</button>

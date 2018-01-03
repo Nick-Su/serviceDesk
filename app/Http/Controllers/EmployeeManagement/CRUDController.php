@@ -115,6 +115,7 @@ class CRUDController extends Controller
 	#
     protected function fillCompanyInfo(Request $request)
     {
+    	$isExist = NULL;
     	$id_company = Auth::user()->id_company;
     	
     	# find the target record
