@@ -108,10 +108,41 @@ Route::get('/tickets_archieve', function(){
 	return view('employee.tickets.view_archieved_tickets');
 });
 
+# create tickets
 Route::post('/create_ticket', 'EmployeeManagement\CRUDController@create_ticket');
+
+
+/////////
+# Indi tickets
+
+# Show all incoming tickets
+Route::get('/view_all_incoming_external_tickets', 'EmployeeManagement\CRUDController@showAllIncomingExternalTickets');
+
+# appoint executor to ticket
+Route::get('/appoint_executor_to_individual_ticket', 'EmployeeManagement\CRUDController@appointExecutorToIndividualTicket');
+
+# Reject ticekt
+Route::get('/reject_individual_ticket/{ticket}', 'EmployeeManagement\CRUDController@rejectIndividualTicket');
+
+# Detailed info about ticket
+Route::get('/more_info_individual_ticket/{ticket}', 'EmployeeManagement\CRUDController@moreInfoIndividualTicket');
+
+# Reopen ticket
+Route::get('/reopen_individual_ticket/{ticket}', 'EmployeeManagement\CRUDController@reopenIndividualTicket');
+
+# Mark ticket as executable
+Route::get('/take_the_individual_ticket/{ticket}', 'EmployeeManagement\CRUDController@takeTheIndividualTicket');
+
+# Refuse the ticket
+Route::get('/refuse_the_individual_ticket/{ticket}', 'EmployeeManagement\CRUDController@refuseTheIndividualTicket');
+
+# Mark tickete as completed by executor
+Route::get('/individual_ticket_complete/{ticket}', 'EmployeeManagement\CRUDController@individualTicketComplete');
+
+
 #
 # Tickets' routes ends here
-#
+# 
 
 
 

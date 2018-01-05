@@ -59,7 +59,8 @@
 
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ url('/individual/create_ticket') }}">Создать заявку</a></li>
-                                <li><a href="{{ url('/employee/outgoing_tickets') }}">Исходящие заявки</a></li>
+                                <li><a href="{{ url('/individual/outgoing_tickets') }}">Исходящие заявки</a></li>
+                                <li><a href="{{ url('/individual/archieved_tickets')}}">Архив заявок</a></li>
                             </ul>
                         </li>
 
