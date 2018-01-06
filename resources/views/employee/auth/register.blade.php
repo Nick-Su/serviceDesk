@@ -106,7 +106,7 @@
                     </form>
 
                     <a href="/individual/register">Регистрация частных клиентов</a><br>
-                    <a href="/legals/register">Регистрация клиентов-организаций</a>
+                    <a href="/legal/register">Регистрация клиентов-организаций</a>
                 </div>
             </div>
         </div>       

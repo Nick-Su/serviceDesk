@@ -62,7 +62,7 @@
                     </form>
 
                      <a href="/individual/login">Вход для частных клиентов</a><br>
-                    <a href="/legals/login">Вход для клиентов-организаций</a>
+                    <a href="/legal/login">Вход для клиентов-организаций</a>
                 </div>
             </div>
         </div>

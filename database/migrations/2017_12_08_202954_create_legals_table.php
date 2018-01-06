@@ -15,10 +15,16 @@ class CreateLegalsTable extends Migration
         Schema::create('legals', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->string('client_name')->nullable();
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('city');
+            $table->string('address');
+            $table->string('phone_number')->nullable();
+            $table->string('room')->nullable();
+
             $table->rememberToken();
-            $table->timestamps();
+            $table->timestamps(); 
         });
     }
 
