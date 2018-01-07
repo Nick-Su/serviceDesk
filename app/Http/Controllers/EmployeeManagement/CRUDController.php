@@ -9,6 +9,7 @@ use App\Employee;
 use App\Unit;
 use App\Ticket;
 use App\IndividualTicket;
+use App\LegalTicket;
 use App\Company;
 
 use DB;
@@ -192,7 +193,6 @@ class CRUDController extends Controller
     	return(redirect('/employee/outgoing_tickets'));
     }
 
-
     #
     # this function gets all incoming tickets related to user
     #
@@ -301,6 +301,61 @@ class CRUDController extends Controller
     			->with('tickets', $tickets)
 				->with('employees', $employees)
 				->with('current_executor', $current_executor);;
+    } 
+
+    #
+    # Shows the incoming external tickets
+    #
+    protected function showAllIncomingExternalLegalTickets()
+    {
+        # This query selects all tickets related to head unit
+        if (Auth::user()->head_unit_id != NULL) {
+            #This code selects tickets from indi clints
+            $tickets = DB::table('legal_tickets')      
+                ->where('id_company_to', Auth::user()->id_company)
+                ->where('id_status', '<>', 2)
+                ->where('id_status', '<>', 7)
+                ->where('unit_to_id', Auth::user()->head_unit_id)       
+                ->get(); 
+
+            # This query selects all employees of single unit
+            $employees = DB::table('employees')
+                ->where('id_company', Auth::user()->id_company)
+                ->where('id_unit', Auth::user()->head_unit_id)
+                ->get();
+
+        } else { 
+            # this query selects all tickets related to executor
+            $tickets = DB::table('legal_tickets')
+                ->where('id_company_to', Auth::user()->id_company)
+                ->where('id_executor', Auth::user()->id)
+                ->get();
+            $employees = NULL;
+        }
+
+        # This algorithm select the name of current executor by id
+        $current_executor = [];
+        $current_employee_init_name = "";
+        $i=0;
+
+        foreach($tickets as $ticket) {
+            
+            $tmpExecutorName = self::getExecutorName($ticket->id_executor);
+            $tmpEmployeeInitName = self::getClientInitName($ticket->id_client);
+            $tmpCurrentStatusName = self::getStatusName($ticket->id_status);
+            
+            $tickets[$i]->current_employee_init_name = $tmpEmployeeInitName;
+            $tickets[$i]->current_executor_name = $tmpExecutorName;
+            $tickets[$i]->current_status_name = $tmpCurrentStatusName;
+            $tickets[$i]->prio = $ticket->id_priority;
+            $i++;
+            
+        } 
+
+        return view('employee.tickets.view_all_incoming_external_legal_tickets')
+                ->with('tickets', $tickets)
+                ->with('employees', $employees)
+                ->with('current_executor', $current_executor);;
     }
 
     #
@@ -373,6 +428,7 @@ class CRUDController extends Controller
     
 		return;
 	}
+  
     #
     # This func appoint exeecutor to the ticket
     #
@@ -410,6 +466,24 @@ class CRUDController extends Controller
     }
 
     #
+    # This func appoint executor to the legal ticket
+    #
+    protected function appointExecutorToLegalTicket(Request $request)
+    {
+        $id = $request['id_ticket'];
+        $recordToUpdate = LegalTicket::findOrFail($id);
+
+        DB::table('legal_tickets')
+            ->where('id', $id)
+            ->update(['id_executor' => $request['id_new_executor']]);
+
+        # вызов функции для автоматической проверки и изменения статуса   
+        self::checkLegalTicketStatus($id);
+        
+        return(redirect('/employee/view_all_incoming_external_legal_tickets'));
+    }
+
+    #
     # This function makes rejection of ticket by setting status 2
 	#
 	protected function rejectTicket($id)
@@ -436,6 +510,20 @@ class CRUDController extends Controller
 
         return(redirect('/employee/view_all_incoming_external_tickets'));
 	}
+
+    #
+    # This function makes rejection of ticket by setting status 2
+    #
+    protected function rejectLegalTicket($id)
+    {
+        (int) $id;
+        $recordToUpdate = LegalTicket::findOrFail($id);
+        DB::table('legal_tickets')
+            ->where('id', $id)
+            ->update(['id_status' => 2]);
+
+        return(redirect('/employee/view_all_incoming_external_legal_tickets'));
+    }
 
 	#
     # This function show additional info about ticket
@@ -526,6 +614,54 @@ class CRUDController extends Controller
         			->with('executorName', $executorName);
 	}
 
+    #
+    # This function show additional info about individual ticket
+    #
+    protected function moreInfoLegalTicket($id)
+    {
+        (int) $id;
+        
+        $ticketInfo = DB::table('legal_tickets')
+            ->where('id', $id)
+            ->get();
+
+        foreach ($ticketInfo as $ticket) {
+            $executorName = self::getExecutorName($ticket->id_executor);
+            $statusName = self::getStatusName($ticket->id_status);
+        }
+
+        # get prio name
+        $prioName = self::getPriority($ticket->id_priority);
+        
+
+        # get unit name
+        $allUnits = self::getUnits($ticket->unit_to_id);
+        foreach ($allUnits as $unit) {
+            $unitName = $unit->name;
+        }
+
+        # get client init name
+        $clientName = self::getClientInitName($ticket->id_client);
+
+        #get client
+        $client = self::getFullClient($ticket->id_client);
+
+        foreach ($client as $key) {
+            $clientEmail = $key->email; 
+            $clientTel = $key->phone_number;
+        }
+
+        return view('employee.tickets.more_info_legal_ticket')
+                    ->with('ticketInfo', $ticketInfo)
+                    ->with('statusName', $statusName)
+                    ->with('prioName', $prioName)
+                    ->with('unitName', $unitName)
+                    ->with('clientName', $clientName)
+                    ->with('clientEmail', $clientEmail)
+                    ->with('clientTel', $clientTel)
+                    ->with('executorName', $executorName);
+    }
+
 	#
     # This function reopen ticket
 	#
@@ -546,13 +682,27 @@ class CRUDController extends Controller
 	protected function reopenIndividualTicket($id)
 	{
 		(int) $id;
-		$recordToUpdate = Ticket::findOrFail($id);
+		#$recordToUpdate = Ticket::findOrFail($id);
 		DB::table('individual_tickets')
             ->where('id', $id)
             ->update(['id_status' => 1, 'id_executor' => NULL]);
 
         return(redirect('/employee/view_all_incoming_external_tickets'));
 	}
+
+    #
+    # This function reopen legal ticket
+    #
+    protected function reopenLegalTicket($id)
+    {
+        (int) $id;
+        $recordToUpdate = LegalTicket::findOrFail($id);
+        DB::table('legal_tickets')
+            ->where('id', $id)
+            ->update(['id_status' => 1, 'id_executor' => NULL]);
+
+        return(redirect('/employee/view_all_incoming_external_legal_tickets'));
+    }
 
 	#
 	# This func marks ticket as processing
@@ -569,7 +719,7 @@ class CRUDController extends Controller
 	}
 
 	#
-	# This func marks ticket as processing
+	# This func marks indi ticket as processing
 	#
 	protected function takeTheIndividualTicket($id)
 	{
@@ -581,6 +731,20 @@ class CRUDController extends Controller
 
         return(redirect('/employee/view_all_incoming_external_tickets'));
 	}
+
+    #
+    # This func marks legal ticket as processing
+    #
+    protected function takeTheLegalTicket($id)
+    {
+        (int) $id;
+        $recordToUpdate = LegalTicket::findOrFail($id);
+        DB::table('legal_tickets')
+            ->where('id', $id)
+            ->update(['id_status' => 4]);
+
+        return(redirect('/employee/view_all_incoming_external_legal_tickets'));
+    }
 
 	#
 	# This func refuse the ticket
@@ -609,6 +773,20 @@ class CRUDController extends Controller
 
         return(redirect('/employee/view_all_incoming_external_tickets'));
 	}
+
+    #
+    # This func refuse the legal ticket
+    #
+    protected function refuseTheLegalTicket($id)
+    {
+        (int) $id;
+        $recordToUpdate = LegalTicket::findOrFail($id);
+        DB::table('legal_tickets')
+            ->where('id', $id)
+            ->update(['id_executor' => NULL, 'id_status' => 1]);
+
+        return(redirect('/employee/view_all_incoming_external_legal_tickets'));
+    }
 
 	#
 	# This func marks ticket as completed by executor
@@ -641,7 +819,23 @@ class CRUDController extends Controller
 
         return(redirect('/employee/view_all_incoming_external_tickets'));
 	}
-    
+        
+    #
+    # This func marks legal ticket as completed by executor
+    #
+    protected function legalTicketComplete($id)
+    {
+        (int) $id;
+        $recordToUpdate = LegalTicket::findOrFail($id);
+        DB::table('legal_tickets')
+            ->where('id', $id)
+            ->update(['confirmed_by_executor' => True, 'id_status' => 5]);
+
+        self::checkLegalTicketBothConfiramtion($id);
+
+        return(redirect('/employee/view_all_incoming_external_legal_tickets'));
+    }
+
     #
     # confirm ticket by Initiator
     #
@@ -735,7 +929,32 @@ class CRUDController extends Controller
             }    
 
 		return;
-	}
+	} 
+
+    #
+    #   This func check executor & initiator confirmation & and if both
+    #   confirmed, it close the legal ticket.
+    #
+    protected function checkLegalTicketBothConfiramtion($id)
+    {   
+        (int) $id;
+        $recordToUpdate = LegalTicket::findOrFail($id);
+        $tmpValues = DB::table('legal_tickets')
+            ->where('id', $id)
+            ->select('confirmed_by_executor', 'confirmed_by_initiator')
+            ->get();
+        
+        foreach ($tmpValues as $value) {
+                if( $value->confirmed_by_executor == 1 && $value->confirmed_by_initiator == 1)
+                {
+                    DB::table('legal_tickets')
+                        ->where('id', $id)
+                        ->update(['id_status' => 7]);
+                }
+            }    
+
+        return;
+    }
 
 	#
 	# get executor name
@@ -852,7 +1071,7 @@ class CRUDController extends Controller
 
 
 	############################
-	# External tickets
+	# External legals tickets
 	########################
 
 	#
@@ -880,4 +1099,26 @@ class CRUDController extends Controller
 		
 		return $client;
 	}
+
+
+
+    ###########################################
+    # External legals tickets
+    ###########################################
+
+    #
+    # This func checks ticket's status & if it's <> 0 it will set status 3
+    #
+    public function checkLegalTicketStatus($id_ticket)
+    {
+        DB::table('legal_tickets')
+            ->where('id', $id_ticket)
+            ->having('id_executor', '>', 0)
+            ->update(['id_status' => 3]);
+    
+        return;
+    }
+
+
+
 }

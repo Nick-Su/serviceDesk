@@ -49,8 +49,8 @@
                 <ul class="nav navbar-nav navbar-right">
                     <!-- Authentication Links -->
                     @if (Auth::guest())
-                        <li><a href="{{ url('/individual/login') }}">Login</a></li>
-                        <li><a href="{{ url('/individual/register') }}">Register</a></li>
+                        <li><a href="{{ url('/individual/login') }}">Вход</a></li>
+                        <li><a href="{{ url('/individual/register') }}">Регистрация</a></li>
                     @else
                         <li class="dropdown"> 
                              <a href="#"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -76,7 +76,7 @@
                                     <a href="{{ url('/individual/logout') }}"
                                         onclick="event.preventDefault();
                                                  document.getElementById('logout-form').submit();">
-                                        Logout
+                                        Выход
                                     </a>
 
                                     <form id="logout-form" action="{{ url('/individual/logout') }}" method="POST" style="display: none;">

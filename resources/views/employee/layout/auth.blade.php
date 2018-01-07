@@ -53,8 +53,8 @@
                 <ul class="nav navbar-nav navbar-right">
                     <!-- Authentication Links -->
                     @if (Auth::guest())
-                        <li><a href="{{ url('/employee/login') }}">Login</a></li>
-                        <li><a href="{{ url('/employee/register') }}">Register</a></li>
+                        <li><a href="{{ url('/employee/login') }}">Вход</a></li>
+                        <li><a href="{{ url('/employee/register') }}">Регистрация</a></li>
                     @else
                         <li class="dropdown"> 
                              <a href="#"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -64,7 +64,8 @@
                             <ul class="dropdown-menu" role="menu">
                                 <li><a href="{{ url('/employee/create_ticket') }}">Создать заявку</a></li>
                                 <li><a href="{{ url('/employee/view_all_incoming_tickets') }}">Входящие заявки</a></li>
-                                <li><a href="{{ url('employee/view_all_incoming_external_tickets') }}">Входящие внешние заявки</a></li>
+                                 <li><a href="{{ url('employee/view_all_incoming_external_tickets') }}">Входящие внешние заявки от частных клиентов</a></li>
+                                <li><a href="{{ url('employee/view_all_incoming_external_legal_tickets') }}">Входящие внешние заявки от организаций</a></li>
                                 <li><a href="{{ url('/employee/outgoing_tickets') }}">Исходящие заявки</a></li>
                             </ul>
                         </li>

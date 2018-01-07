@@ -140,6 +140,37 @@ Route::get('/refuse_the_individual_ticket/{ticket}', 'EmployeeManagement\CRUDCon
 Route::get('/individual_ticket_complete/{ticket}', 'EmployeeManagement\CRUDController@individualTicketComplete');
 
 
+
+////////////////////////////
+# Legals ticket
+
+# Show all incoming tickets
+Route::get('/view_all_incoming_external_legal_tickets', 'EmployeeManagement\CRUDController@showAllIncomingExternalLegalTickets');
+
+# appoint executor to ticket
+Route::get('/appoint_executor_to_legal_ticket', 'EmployeeManagement\CRUDController@appointExecutorToLegalTicket');
+
+# appoint executor to ticket
+Route::get('/appoint_executor_to_legal_ticket', 'EmployeeManagement\CRUDController@appointExecutorToLegalTicket');
+
+# Reject ticekt
+Route::get('/reject_legal_ticket/{ticket}', 'EmployeeManagement\CRUDController@rejectLegalTicket');
+
+# Detailed info about ticket
+Route::get('/more_info_legal_ticket/{ticket}', 'EmployeeManagement\CRUDController@moreInfoLegalTicket');
+
+# Reopen ticket
+Route::get('/reopen_legal_ticket/{ticket}', 'EmployeeManagement\CRUDController@reopenLegalTicket');
+
+# Mark ticket as executable
+Route::get('/take_the_legal_ticket/{ticket}', 'EmployeeManagement\CRUDController@takeTheLegalTicket');
+
+# Refuse the ticket
+Route::get('/refuse_the_legal_ticket/{ticket}', 'EmployeeManagement\CRUDController@refuseTheLegalTicket');
+
+# Mark tickete as completed by executor
+Route::get('/legal_ticket_complete/{ticket}', 'EmployeeManagement\CRUDController@legalTicketComplete');
+
 #
 # Tickets' routes ends here
 # 

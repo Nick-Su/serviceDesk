@@ -52,17 +52,30 @@
                         <li><a href="{{ url('/legal/login') }}">Login</a></li>
                         <li><a href="{{ url('/legal/register') }}">Register</a></li>
                     @else
+                        <li class="dropdown"> 
+                             <a href="#"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                                Мои заявки <span class="caret"></span>
+                            </a>
+
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{ url('/legal/create_ticket') }}">Создать заявку</a></li>
+                                <li><a href="{{ url('/legal/outgoing_tickets') }}">Исходящие заявки</a></li>
+                                <li><a href="{{ url('/legal/archieved_tickets')}}">Архив заявок</a></li>
+                            </ul>
+                        </li>
+
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                 {{ Auth::user()->name }} <span class="caret"></span>
                             </a>
 
                             <ul class="dropdown-menu" role="menu">
+                                <li><a href="{{url('/legal/profile')}}">Профиль</a></li>
                                 <li>
                                     <a href="{{ url('/legal/logout') }}"
                                         onclick="event.preventDefault();
                                                  document.getElementById('logout-form').submit();">
-                                        Logout
+                                        Выход
                                     </a>
 
                                     <form id="logout-form" action="{{ url('/legal/logout') }}" method="POST" style="display: none;">

@@ -1,0 +1,1 @@
+@extends('legal.layout.auth')
