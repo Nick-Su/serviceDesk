@@ -14,10 +14,10 @@ Route::get('/home', function () {
 
 
 Route::get('/create_employee', [
-	'middleware' => 'isAdmin', 
+	'middleware' => 'isAdmin',
 	function () {
 		$units = DB::table('units')->where('id_company', Auth::user()->id_company)->get();
-    	
+
     	return view('employee.create')->with('units', $units);
 }]);
 
@@ -30,7 +30,7 @@ Route::middleware(['isAdmin'])->group(function () {
 	    $users[] = Auth::guard('employee')->user();
 
 	    return view('employee.manage');
-	}); 
+	});
 
 	Route::get('/about_company', 'EmployeeManagement\CRUDController@showAboutCompanyForm');
 
@@ -173,7 +173,7 @@ Route::get('/legal_ticket_complete/{ticket}', 'EmployeeManagement\CRUDController
 
 #
 # Tickets' routes ends here
-# 
+#
 
 
 
@@ -181,3 +181,10 @@ Route::get('/legal_ticket_complete/{ticket}', 'EmployeeManagement\CRUDController
 Route::get('/permission_denied', function(){
   return view('employee.permission_denied');
 });
+
+
+
+
+
+
+Route::get('/view_all_incoming_inner_tickets', 'AJAXController@index');

@@ -31,7 +31,7 @@
             <th>Действия</th>
           </tr>
         </thead>
-        <tbody> 
+        <tbody>
             @forelse($tickets as $ticket)
               <tr>
                 <td>{{ $ticket->id }}</td>
@@ -59,10 +59,10 @@
                             </div>
                             <span class="input-group-btn"><button class="btn btn-md btn-success">OK</button></span>
                         </form>
-                      </div>                
+                      </div>
                     </div>
                   </div>
-                @else 
+                @else
                     <!-- If the user is an executor, not a head unit -->
                     {{ $ticket->current_executor_name }}
                 @endif
@@ -75,7 +75,7 @@
                     <input type="hidden" name="id_record" value="{{ $ticket->id }}">
 
                     <a href="/employee/reject_ticket/{{$ticket->id}}" class="btn btn-danger btn-sm">
-                      <span class="glyphicon glyphicon-remove" title="Отклонить заявку"></span>                     
+                      <span class="glyphicon glyphicon-remove" title="Отклонить заявку"></span>
                     </a>
 
                   <a href="/employee/more_info_ticket/{{$ticket->id}}" class="btn btn-info btn-sm">
@@ -88,10 +88,10 @@
                   </form>
                   @else
                     <a href="/employee/take_the_ticket/{{$ticket->id}}" class="btn btn-primary btn-sm">
-                      <span class="glyphicon glyphicon-hourglass" title="Отметить заявку как выполняемую"></span>                     
+                      <span class="glyphicon glyphicon-hourglass" title="Отметить заявку как выполняемую"></span>
                     </a>
                     <a href="/employee/refuse_the_ticket/{{$ticket->id}}" class="btn btn-danger btn-sm">
-                      <span class="glyphicon glyphicon-ban-circle" title="Отказаться от заявки"></span>                     
+                      <span class="glyphicon glyphicon-ban-circle" title="Отказаться от заявки"></span>
                     </a>
 
                     <a href="/employee/more_info_ticket/{{$ticket->id}}" class="btn btn-info btn-sm">
@@ -99,20 +99,54 @@
                     </a>
 
                     <a href="/employee/ticket_complete/{{$ticket->id}}" class="btn btn-success btn-sm">
-                      <span class="glyphicon glyphicon-ok-circle" title="Отметить заявку как выполненную"></span>                     
-                    </a>  
+                      <span class="glyphicon glyphicon-ok-circle" title="Отметить заявку как выполненную"></span>
+                    </a>
                   @endif
                 </td>
                 </tr>
                   @empty
                     <p>Нет входящих заявок.</p>
                   @endforelse
-              
+
           </tbody>
         </table>
-                  
+
     </div>
   </div>
 </div>
+
+
+
+
+<script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+  function show()
+  {
+    /*$.ajax({
+        url: "time.php",
+        cache: false,
+        success: function(html){
+            $("#content").html(html);
+        } */
+
+        $.post('/employee/view_all_incoming_tickets'}, function(data) {
+               console.log(data);
+               $('#items').load(location.href + ' #items');
+             });
+    });
+  }
+
+  $(document).ready(function(){
+			show();
+			setInterval('show()',1000);
+		});
+
+
+</script>
 
 @endsection
