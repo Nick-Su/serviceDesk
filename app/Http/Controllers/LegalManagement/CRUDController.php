@@ -91,47 +91,35 @@ class CRUDController extends Controller
 	#
 	public function showOutgoingTickets()
 	{
-		$tickets = DB::table('legal_tickets')		
-			->where('id_client', Auth::user()->id)
-			->where('id_status', '<>', 2)
-			->where('id_status', '<>', 7)		
-			->get(); 
+		$tickets = DB::table('legal_tickets')
+                ->orderBy('id_priority', 'desc')
+				->where('id_client', Auth::user()->id)
+				->where('id_status', '<>', 2)
+				->where('id_status', '<>', 7)     
+				->get(); 
 
-		# This algorithm select the name of current executor by id
+       # This algorithm select the name of current executor by id
+		$current_executor = [];
 		$current_employee_init_name = "";
-		$companyName = "";
-		$current_executor = "";
-		$subject = "";
-		$description = "";
-		$priority = "";
-		$statusName = "";
 		$i=0;
 
 		foreach($tickets as $ticket) {
-			
 			# get the company name
 			$companyName = self::getCompanyName($ticket->id_company_to);
-			# get the current executor
-			$current_executor = self::getCurrentExecutor($ticket->id_executor);
-			# get the subject
-			$subject = $ticket->subject;
-			# get the description
-			$description = $ticket->description;
-			# get the priority
-			$priority = self::getPriorityName($ticket->id_priority);
-			# get the current status
-			$statusName = self::getStatusName($ticket->id_status);
+
+			$tmpExecutorName = self::getExecutorName($ticket->id_executor);
+			#$tmpEmployeeInitName = self::getClientInitName($ticket->id_client);
+			$tmpCurrentStatusName = self::getStatusName($ticket->id_status);
 			
+			$tickets[$i]->companyName = $companyName;
+			$tickets[$i]->current_executor_name = $tmpExecutorName;
+			$tickets[$i]->current_status_name = $tmpCurrentStatusName;
+			$tickets[$i]->priority = $ticket->id_priority;
+			$i++;			
 		} 
 
-		return view('legal.tickets.view_outgoing_tickets')
-				->with('tickets', $tickets)
-				->with('companyName', $companyName)
-				->with('current_executor', $current_executor)
-				->with('subject', $subject)
-				->with('description', $description)
-				->with('priority', $priority)
-				->with('statusName', $statusName);	
+		return view('legal.tickets.view_outgoing_tickets', compact('tickets'));
+				
 	}
 
 	#

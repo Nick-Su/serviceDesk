@@ -19,6 +19,9 @@
             'csrfToken' => csrf_token(),
         ]); ?>
     </script>
+
+    <script src="{!! asset('/jquery-3.2.1.min.js') !!}"></script> 
+    
 </head>
 <body>
     <nav class="navbar navbar-default navbar-static-top">
@@ -49,8 +52,8 @@
                 <ul class="nav navbar-nav navbar-right">
                     <!-- Authentication Links -->
                     @if (Auth::guest())
-                        <li><a href="{{ url('/legal/login') }}">Login</a></li>
-                        <li><a href="{{ url('/legal/register') }}">Register</a></li>
+                        <li><a href="{{ url('/legal/login') }}">Войти</a></li>
+                        <li><a href="{{ url('/legal/register') }}">Зарегистрироваться</a></li>
                     @else
                         <li class="dropdown"> 
                              <a href="#"  class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">

@@ -186,5 +186,3 @@ Route::get('/permission_denied', function(){
 
 
 
-
-Route::get('/view_all_incoming_inner_tickets', 'AJAXController@index');

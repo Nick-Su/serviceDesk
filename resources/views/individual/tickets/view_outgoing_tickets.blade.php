@@ -3,11 +3,11 @@
 @section('content')
 
 <div class="row">
-  <div class="col-md-12" >
+  <div class="col-md-10 col-md-offset-1 " >
     
 
     <!-- Вывод пользователей -->
-    <div class="col-md-10 col-md-offset-1 ">
+    <div class="" id="tickets">
       <h2>Исходящие заявки</h2>
       <b>На этой странице ({{ $tickets->count() }}) заявок</b>
       </br>
@@ -30,13 +30,13 @@
             @forelse($tickets as $ticket)
               <tr>
                 <td>{{ $ticket->id }}</td>
-                <td>{{ $companyName }}</td>
+                <td>{{ $ticket->companyName }}</td>
                 <td>{{ $ticket->subject }}</td>
                 <td>{{ $ticket->description }}</td>
-                <td>{{ $priority }}</td>
+                <td>{{ $ticket->priority }}</td>
                 <td>{{ $ticket->created_at }}</td>
-                <td>{{ $current_executor }}</td>
-                <td>{{ $statusName }}</td>
+                <td>{{ $ticket->current_executor_name }}</td>
+                <td>{{ $ticket->current_status_name }}</td>
             
                 <td>
                    
@@ -64,4 +64,30 @@
     </div>
   </div>
 </div>
+
+
+<script type="text/javascript">
+
+  function show()
+  {
+    $.get({
+        url: "/individual/outgoing_tickets",
+        cache: false,
+        data: {
+          "_token": "{{ csrf_token() }}",
+        },
+        success: function(data) {
+          console.log(data);
+          $('#tickets').load(location.href + ' #tickets');
+        }
+    });
+  }
+
+  $(document).ready(function () {
+      show();
+      setInterval('show()', 5000);
+  });
+
+</script> 
+
 @endsection

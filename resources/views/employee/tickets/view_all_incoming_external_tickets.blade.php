@@ -2,11 +2,11 @@
 
 @section('content')
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-md-10 col-md-offset-1">
     <!-- Вывод пользователей -->
-    <div class="col-md-10 col-md-offset-1">
-      <h2>Входящие внешние заявки</h2>
-      <b>На этой странице ({{   $tickets->count()}} заявок)</b>
+    <div class="" id="tickets">
+      <h2>Входящие заявки от частных клиентов</h2>
+      <b>На этой странице ({{ $tickets->count()}} заявок)</b>
       </br>
       </br>
       <table class="table table-striped table-bordered">
@@ -106,4 +106,31 @@
     </div>
   </div>
 </div>
+
+
+<script type="text/javascript">
+
+  function show()
+  {
+    $.get({
+        url: "/employee/view_all_incoming_external_tickets",
+        cache: false,
+        data: {
+          "_token": "{{ csrf_token() }}",
+        },
+        success: function(data) {
+          console.log(data);
+          $('#tickets').load(location.href + ' #tickets');
+        }
+    });
+  }
+
+  $(document).ready(function () {
+      show();
+      setInterval('show()', 5000);
+  });
+
+</script>
+
+
 @endsection

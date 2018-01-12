@@ -117,6 +117,7 @@
 
 
 
+{{ csrf_field() }}
 
 <script
   src="https://code.jquery.com/jquery-3.2.1.min.js"
@@ -127,24 +128,23 @@
 <script type="text/javascript">
   function show()
   {
-    /*$.ajax({
-        url: "time.php",
+    $.get({
+        url: "/employee/view_all_incoming_tickets",
         cache: false,
-        success: function(html){
-            $("#content").html(html);
-        } */
-
-        $.post('/employee/view_all_incoming_tickets'}, function(data) {
-               console.log(data);
-               $('#items').load(location.href + ' #items');
-             });
+        data: {
+          "_token": "{{ csrf_token() }}",
+        },
+        success: function(data) {
+          console.log(data);
+          $('#items').load(location.href + ' #tickets');
+        }
     });
   }
 
-  $(document).ready(function(){
-			show();
-			setInterval('show()',1000);
-		});
+  $(document).ready(function () {
+      show();
+      setInterval('show()', 1000);
+  });
 
 
 </script>

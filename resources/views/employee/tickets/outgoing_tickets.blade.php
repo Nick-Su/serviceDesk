@@ -3,18 +3,9 @@
 @section('content')
 
 <div class="row">
-  <div class="col-md-12" >
-    <div class="col-md-2" style="height: 300px; margin-top: 7.5em;">
-      <ul class="list-group">
-        <li class="list-group-item"><a href="{{ url('/employee/create_ticket') }}"> Создать заявку </a></li>
-        <li class="list-group-item"><a href="">Входящие заявки</a></li>
-        <li class="list-group-item"><a href="">Исходящие заявки</a></li>
-        <li class="list-group-item"><a href="{{url('/employee/tickets_archieve')}}">Архив заявок</a></li>
-      </ul>
-    </div>
-
+  <div class="col-md-10 col-md-offset-1">
     <!-- Вывод пользователей -->
-    <div class="col-md-9 ">
+    <div class="" id="tickets">
       <h2>Исходящие заявки</h2>
       <b>На этой странице ({{ $tickets->count() }}) заявок</b>
       </br>
@@ -72,9 +63,28 @@
   </div>
 </div>
 
+<script type="text/javascript">
+
+  function show()
+  {
+    $.get({
+        url: "/employee/outgoing_tickets",
+        cache: false,
+        data: {
+          "_token": "{{ csrf_token() }}",
+        },
+        success: function(data) {
+          console.log(data);
+          $('#tickets').load(location.href + ' #tickets');
+        }
+    });
+  }
+
+  $(document).ready(function () {
+      show();
+      setInterval('show()', 5000);
+  });
+
+</script>
 @endsection
 
-<?php
-#var_dump($tickets)
-
-?>
