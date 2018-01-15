@@ -16,8 +16,8 @@
             </div>
 
         <!-- Вывод пользователей -->
-        <div class="col-md-6 ">
-            <b>In this page ({{ $users->count()}} users)</b>
+        <div class="col-md-6 " id="employee_list">
+            <b>На этой странице ({{ $users->count()}} сотрудников)</b>
             <ul class="list-group">
                 @forelse($users as $user)
                     <li class="list-group-item" style="margin-top: 20px;">
@@ -25,15 +25,19 @@
                         <span> {{ $user->name }} </span>
 
                         <span class="pull-right clearfix">
+                            
+                            <a href="/employee/edit_employee/{{ $user->id}}" class="edit" id="{{ $user->id}}">
+                                <button  class="btn btn-xs btn-primary">Редактировать</button>
+                            </a> 
 
-
-                    <button class="btn btn-xs btn-primary">Edit</button>
-                    <button class="btn btn-xs btn-danger">Delete</button>
-
+                            <a href="#" class="delete" id="{{ $user->id}}">
+                                <button class="btn btn-xs btn-danger">Удалить</button>
+                            </a>
+                           
                         </span>
                     </li>
                 @empty
-                    <p>No users available.</p>
+                    <p>Сотрудники не найдены</p>
                 @endforelse
 
             </ul>
@@ -49,7 +53,52 @@
 
 
 
+<script type="text/javascript">
+    
+    $(document).ready(function () {
+     
+        $('.delete').click(function(event) {
+            var isDelete = confirm('Вы действительно хотите удалить этого сотрудника?');
+            var id = this.id;
 
+            if (isDelete) {
+                $.post({
+                    url: "/employee/delete_employee",
+                    cache: false,
+                    data: {
+                      "_token": "{{ csrf_token() }}",
+                      "id": id,
+                    },
+                    success: function(data) {     
+                      $('#employee_list').load(location.href + ' #employee_list');
+                    }
+                });
+              
+               
+            } else {
+                alert('no deletion');
+            }
+        });
+
+    });
+
+    /* $.get({
+        url: "/employee/delete_employee",
+        cache: false,
+        data: {
+          "_token": "{{ csrf_token() }}",
+        },
+        success: function(data) {
+          console.log(data);
+          
+          $('#tickets').load(location.href + ' #tickets');
+        }
+    }); */
+  
+
+  ;
+
+</script> 
 
 
 

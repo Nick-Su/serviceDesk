@@ -50,6 +50,13 @@ Route::middleware(['isAdmin'])->group(function () {
 
 	Route::post('/fill_company_info', 'EmployeeManagement\CRUDController@fillCompanyInfo');
 
+	# employee edit and delete
+	Route::post('/delete_employee', 'EmployeeManagement\CRUDController@deleteEmployee');
+
+	Route::get('/edit_employee/{id}', 'EmployeeManagement\CRUDController@showEditEmployeeForm');
+
+	Route::post('/save_edit_employee_changes', 'EmployeeManagement\CRUDController@saveEditEmployeeChanges');
+
 });
 # Route protection ends here
 

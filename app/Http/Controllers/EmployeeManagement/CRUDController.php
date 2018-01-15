@@ -54,6 +54,67 @@ class CRUDController extends Controller
         #return Employee::create($request->all());
     }
 
+    #
+    # Delete employee
+    #
+    public function deleteEmployee(Request $request)
+    {
+        $item = Employee::find($request->id);
+        $item->delete();
+        return $request->all();
+    }
+
+    #
+    # Show Edit employee page
+    #
+    public function showEditEmployeeForm($id)
+    {
+        $employee = DB::table('employees')
+                    ->where('id', $id)
+                    ->get();
+
+        foreach ($employee as $key) {
+            $isChecked = $key->id_role;
+        }
+
+        $isChecked == 1 ? $isChecked = "checked" : '';
+
+        $units = DB::table('units')
+                    ->where('id_company', Auth::user()->id_company)
+                    ->get();
+
+        return view('employee.edit_employee')
+                ->with('employee', $employee)
+                ->with('units', $units)
+                ->with('isChecked', $isChecked);
+    }
+
+    #
+    # Save employee edit changes
+    #
+    protected function saveEditEmployeeChanges(Request $request)
+    {
+        $id = $request['id'];
+
+        $request['id_role'] == 1 ? $id_role = 1 : $id_role = 2;
+
+        DB::table('employees')
+            ->where('id', $id)
+
+            ->update([
+                'name' => $request['name'],  
+                'email' => $request['email'],
+                'phone_number' => $request['phone_number'],
+                'id_unit' => $request['id_unit'],
+                'head_unit_id' => $request['head_unit_id'],
+                'room' => $request['room'],
+                'id_role' => $id_role,
+            ]);            
+        
+        return(redirect('/employee/management')); 
+       
+    }
+
 	#
     # Add new unit
     #
