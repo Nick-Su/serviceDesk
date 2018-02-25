@@ -1,14 +1,24 @@
 @extends('employee.layout.auth')
 
 @section('content')
+<?php 
+
+if(isset($_POST['userID']))
+{
+    $uid = $_POST['userID'];
+    echo $uid;
+    // Do whatever you want with the $uid
+}
+?>
 <div class="row">
   <div class="col-md-10 col-md-offset-1">
     <!-- Вывод пользователей -->
     <div class="" id="tickets">
-      <h2>Входящие внешние заявки от организаций</h2>
+      <h2>Входящие внешние заявки от организаций 5656</h2>
       <b>На этой странице ({{   $tickets->count()}} заявок)</b>
       </br>
       </br>
+
       <table class="table table-striped table-bordered">
         <thead>
           <tr>
@@ -22,7 +32,7 @@
             <th>Действия</th>
           </tr>
         </thead>
-        <tbody> 
+        <tbody id="showdata"> 
             @forelse($tickets as $ticket)
               <tr>
                 <td>{{ $ticket->id }}</td>
@@ -91,7 +101,7 @@
                     </a>
 
                     <a href="/employee/legal_ticket_complete/{{$ticket->id}}" class="btn btn-success btn-sm">
-                      <span class="glyphicon glyphicon-ok-circle" title="Отметить заявку как выполненную"></span>                     
+                      <span class="glyphicon glyphicon-ok-circle" title="Отметить заявку как выполненную"></span>
                     </a>  
                   @endif
                 </td>
@@ -108,10 +118,169 @@
 </div>
 
 
-<script type="text/javascript">
+<input type="hidden" id="authUserHeadUnitID" value="<?= Auth::user()->head_unit_id ?>">
 
-  function show()
+ <meta name="_token" content="{!! csrf_token() !!}" />
+
+
+
+<script type="text/javascript">
+ 
+function show() {
+  
+  $.get({
+          url: "/employee/getRequest",
+          cache: false,
+          async: true,
+          data: {
+            "_token": "{{ csrf_token() }}",
+          },
+          
+          dataType: 'JSON',
+          success: function(data) {
+            //console.log(data[0].employees.length);
+            console.log(data);
+
+            var html = '';
+            var i;
+            var j;
+            var emp;
+            var btn = '<span class="input-group-btn"><button class="btn btn-md btn-success">OK</button></span>';
+            var authUserHeadUnitID =  document.getElementById("authUserHeadUnitID").value;
+            var WhichBtnToShow;
+            var OneEmpOrNot;
+      
+            
+            for(i=0; i<data.length; i++){
+             
+              emp = '';
+
+              if (data[0].employees !== null) {
+
+              for (j = 0; j<data[i].employees.length; j++) {
+                emp += '<option value="'+data[i].employees[j].id+'">'+data[i].employees[j].name+'</option> ';  
+
+                if (authUserHeadUnitID != null) { 
+                  OneEmpOrNot = '<div class="row">'+
+                    '<div class="col-md-12">'+
+                      '<div class="input-group form-group col-sm-12">'+
+                        '<form class="form-horizontal" method="get" action="/employee/appoint_executor_to_legal_ticket">'+
+                          '<div class="col-sm-9">'+
+                            '<input type="hidden" name="id_ticket" value="'+ data[i].id +'">'+
+
+                            '<select class="form-control" name="id_new_executor">'
+                                  +'<option value="NULL">'+data[i].current_executor_name+'</option>'
+                                  + emp +                             
+                            '</select>'+
+                
+                          '</div>'
+                          + btn +
+                      '</div>'+ 
+                        '</form>'+
+                    '<div>'+
+                  '</div>';
+
+                  WhichBtnToShow = '<form method="get" action="">'+
+                    '<input type="hidden" name="id_record" value="'+data[i].id+'">' +
+
+                    '<a href="/employee/reject_legal_ticket/'+ data[i].id +'" class="btn btn-danger btn-sm">'+
+                      '<span class="glyphicon glyphicon-remove" title="Отклонить заявку"></span>'+                     
+                    '</a>'+
+
+                    '<a href="/employee/more_info_legal_ticket/'+ data[i].id +'" class="btn btn-info btn-sm">'+
+                      '<span class="glyphicon glyphicon-info-sign" title="Подробная информация о заявке"></span>'+
+                    '</a>'+
+
+                    '<a href="/employee/reopen_legal_ticket/'+ data[i].id +'" class="btn btn-warning btn-sm">'+
+                      '<span class="glyphicon glyphicon-retweet" title="Переоткрыть заявку"></span>'+
+                    '</a>'+
+                  '</form>';
+                } else {
+                    OneEmpOrNot = data[i].current_executor_name;
+
+                    WhichBtnToShow = 
+                    '<a href="/employee/take_the_legal_ticket/'+ data[i].id +'" class="btn btn-primary btn-sm">'+
+                      '<span class="glyphicon glyphicon-hourglass" title="Отметить заявку как выполняемую"></span>'+
+                    '</a>'+
+                    
+                    '<a href="/employee/refuse_the_legal_ticket/'+ data[i].id +'" class="btn btn-danger btn-sm">'+
+                      '<span class="glyphicon glyphicon-ban-circle" title="Отказаться от заявки"></span>'+
+                    '</a>'+
+
+                    '<a href="/employee/more_info_legal_ticket/'+ data[i].id +'" class="btn btn-info btn-sm">'+
+                      '<span class="glyphicon glyphicon-info-sign" title="Подробная информация о заявке"></span>'+
+                    '</a>'+
+
+                    '<a href="/employee/legal_ticket_complete/'+ data[i].id +'" class="btn btn-success btn-sm">'+
+                      '<span class="glyphicon glyphicon-ok-circle" title="Отметить заявку как выполненную"></span>'+
+                    '</a>';
+                }          
+              };
+
+            } else {
+              OneEmpOrNot = data[i].current_executor_name;
+
+              WhichBtnToShow = 
+                    '<a href="/employee/take_the_legal_ticket/'+ data[i].id +'" class="btn btn-primary btn-sm">'+
+                      '<span class="glyphicon glyphicon-hourglass" title="Отметить заявку как выполняемую"></span>'+
+                    '</a>'+
+                    
+                    '<a href="/employee/refuse_the_legal_ticket/'+ data[i].id +'" class="btn btn-danger btn-sm">'+
+                      '<span class="glyphicon glyphicon-ban-circle" title="Отказаться от заявки"></span>'+
+                    '</a>'+
+
+                    '<a href="/employee/more_info_legal_ticket/'+ data[i].id +'" class="btn btn-info btn-sm">'+
+                      '<span class="glyphicon glyphicon-info-sign" title="Подробная информация о заявке"></span>'+
+                    '</a>'+
+
+                    '<a href="/employee/legal_ticket_complete/'+ data[i].id +'" class="btn btn-success btn-sm">'+
+                      '<span class="glyphicon glyphicon-ok-circle" title="Отметить заявку как выполненную"></span>'+
+                    '</a>';
+            }
+   
+              html +='<tr>'+
+                    '<td>'+data[i].id+'</td>'+
+                    '<td>'+data[i].subject+'</td>'+
+                    '<td>'+data[i].description+'</td>'+
+                    '<td>'+data[i].current_employee_init_name+'</td>'+
+                    '<td>'+data[i].created_at+'</td>'+
+                    
+                    '<td>'
+                     + OneEmpOrNot +
+                    '</td>'+
+
+                    '<td>'+ data[i].current_status_name +'</td>'+
+                    '<td>'+
+                      WhichBtnToShow +
+                    '</td>'+
+                    '</tr>';
+            }
+            $('#showdata').html(html);
+
+          }
+      }); // ends a $.get
+
+}
+
+
+
+$(document).ready(function () {
+      show();
+      setInterval('show()', 5000);
+  }); 
+</script>
+
+@endsection
+
+
+@section('script')
+
+<script type="text/javascript">
+// Original function
+/*
+function show()
   {
+    
     $.get({
         url: "/employee/view_all_incoming_external_legal_tickets",
         cache: false,
@@ -121,16 +290,19 @@
         success: function(data) {
           console.log(data);
           $('#tickets').load(location.href + ' #tickets');
+
+          //$('#tickets').append(data);
+          
+          //$('#tickets').html('data');
         }
-    });
-  }
+    }); 
+  } 
 
   $(document).ready(function () {
       show();
       setInterval('show()', 5000);
   });
 
+*/
 </script>
-
-
 @endsection

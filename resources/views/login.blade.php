@@ -3,7 +3,7 @@
 @section('content')
 
 	
-	<div class="col-md-12">
+	<div class="col-md-12 jumbotron">
 
 		<div class="col-md-8 col-md-offset-2 tile-wrap">
 
@@ -12,51 +12,86 @@
 			<br><br><br>
 			
 			<a href="/employee/login">
-				<div class="col-xs-3 text-center tile" id="login-employee">
-					<h3>Сотрудникам</h3>
+				<div class="col-xs-3 text-center emp">
+					<div class="tile img-container" id="login-employee">
+						<img src="{!! asset('/pics/employee.jpg') !!}">
+						<h3>Сотрудникам</h3>
+					</div>				
 				</div>
 			</a>
 
 			<a href="/individual/login">
-				<div class="col-xs-3 text-center tile" id="login-indi">
-					<h3>Физическим лицам</h3>
+				<div class="col-xs-3 text-center">
+					<div class="tile img-container" id="login-indi">
+						<img src="{!! asset('/pics/indi.jpg') !!}">	
+						<h3>Физическим лицам</h3>				
+					</div>					
 				</div>
 			</a>
 
 			<a href="/legal/login">
-				<div class="col-xs-3 text-center tile" id="login-legal">
-					<h3>Юридическим лицам</h3>
+				<div class="col-xs-3 text-center">
+					<div class="tile img-container" id="login-legal">
+						<img src="{!! asset('/pics/legal.jpg') !!}">	
+						<h3>Юридическим лицам</h3>			
+					</div>				
 				</div>
 			</a>
+
 		</div>
 	</div>
 
 
 <style type="text/css">
+
+
+	.jumbotron {
+		margin-top: -3em;
+		height: auto;
+		background-image: url({!! asset('/pics/cup-of-coffee.jpg') !!});
+	}
+
 	.main_title {
+		color:white;
 		padding-left: 3.2em;
 	}
 
 	.tile-wrap {
-		margin-top: 10em;
-		background-color: grays;
+		height: 30em;
+		dmargin-top: 0em;
+		aborder: 1px solid gray;
 	}
 
 	.tile {
 		height: 200px;
-		border: 1px solid rgba(0, 0, 0, 0.5);
-		margin-left: 3em;
+		aborder: 1px solid rgba(0, 0, 0, 0.5);
+		fmargin-left: 3em;
 
-		line-height: 170px;
+		fline-height: 170px;
 	}
 
 	.tile h3 {
 		vertical-align: middle;
     	display: inline-block;
+    	color: white;
 	}
 
-	#login-employee {
+	.tile-wrap h3 {
+		color: white;
+	}
+
+	.img-container {
+		height: auto;
+	}
+
+	.emp {
 		margin-left: 7em;
+	}
+
+	#login-legal {
+		
+		background-repeat: no-repeat;
+		background-image: url();
 	}
 
 	a {
@@ -66,6 +101,14 @@
         font-weight: 100;
         height: 100vh;
         margin: 0;
+    }
+
+	.img-container h3 {
+    	color: #CCCFE1;
+    }
+
+    a:hover h3 {
+    	color: white;
     }
 
 </style>
@@ -80,6 +123,40 @@
 			$('.tile').css('box-shadow', 'none');
 		});	
 	});
+
+
+
+
+
+
+
+	jQuery(function ($) {
+    function fix_size() {
+        var images = $('.img-container img');
+        images.each(setsize);
+
+        function setsize() {
+            var img = $(this),
+                img_dom = img.get(0),
+                container = img.parents('.img-container');
+            if (img_dom.complete) {
+                resize();
+            } else img.one('load', resize);
+
+            function resize() {
+                if ((container.width() / container.height()) < (img_dom.width / img_dom.height)) {
+                    img.width('100%');
+                    img.height('auto');
+                    return;
+                }
+                img.height('100%');
+                img.width('auto');
+            }
+        }
+    }
+    $(window).on('resize', fix_size);
+    fix_size();
+});
 </script>
 
 @endsection

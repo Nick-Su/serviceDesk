@@ -8,6 +8,9 @@ Route::get('/home', function () {
 })->name('home');
 
 
+
+Route::get('/getRequest', 'EmployeeManagement\CRUDController@sendTicketUpdate');
+
 ####################################
 # Company Administration section
 ###################################
@@ -119,7 +122,7 @@ Route::get('/tickets_archieve', function(){
 Route::post('/create_ticket', 'EmployeeManagement\CRUDController@create_ticket');
 
 
-/////////
+///////////////////////////////////////////////////////
 # Indi tickets
 
 # Show all incoming tickets
@@ -150,8 +153,15 @@ Route::get('/individual_ticket_complete/{ticket}', 'EmployeeManagement\CRUDContr
 
 ////////////////////////////
 # Legals ticket
+Route::get('/test', 'DynamicUpdateController@testfunction');
+Route::post('/test', 'DynamicUpdateController@testfunction');
 
 # Show all incoming tickets
+Route::get('/view_all_incoming_external_legal_tickets/{ticket}', 'EmployeeManagement\CRUDController@showAllIncomingExternalLegalTickets');
+
+
+// Origin
+# Show all incoming tickets via AJAX
 Route::get('/view_all_incoming_external_legal_tickets', 'EmployeeManagement\CRUDController@showAllIncomingExternalLegalTickets');
 
 # appoint executor to ticket
@@ -188,7 +198,6 @@ Route::get('/legal_ticket_complete/{ticket}', 'EmployeeManagement\CRUDController
 Route::get('/permission_denied', function(){
   return view('employee.permission_denied');
 });
-
 
 
 

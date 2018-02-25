@@ -368,11 +368,44 @@ class CRUDController extends Controller
 				//->with('current_executor', $current_executor);;
     } 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     #
     # Shows the incoming external tickets
     #
-    protected function showAllIncomingExternalLegalTickets()
+    protected function showAllIncomingExternalLegalTickets(Request $request)
     {
+        // if (AJAX_request)
+        // {
+        //     return 1; // return only table
+        // }
+
         # This query selects all tickets related to head unit
         if (Auth::user()->head_unit_id != NULL) {
             #This code selects tickets from indi clints
@@ -417,10 +450,119 @@ class CRUDController extends Controller
             $tickets[$i]->prio = $ticket->id_priority;
             $i++;
             
-        } 
+        }    
 
-        return view('employee.tickets.view_all_incoming_external_legal_tickets', compact('tickets', 'employees', 'current_executor'));
+        //return view('employee.tickets.view_all_incoming_external_legal_tickets', compact('tickets', 'employees', 'current_executor'));
+
+        if($request->ajax()){
+            //return response()->json(['success' => true, 'employees' => $employees, 'tickets' => $tickets, 'current_executor' => $current_executor]);
+            
+            //return response()->view('employee.tickets.view_all_incoming_external_legal_tickets', compact('tickets', 'employees', 'current_executor'));
+            //return view('employee.tickets.view_all_incoming_external_legal_tickets', compact('tickets', 'employees', 'current_executor'));
+        } else {
+            return view('employee.tickets.view_all_incoming_external_legal_tickets', compact('tickets', 'employees', 'current_executor'));
+        }
     }
+
+
+    public function sendTicketUpdate(Request $request)
+    {
+        
+
+        # This query selects all tickets related to head unit
+        if (Auth::user()->head_unit_id != NULL) {
+            #This code selects tickets from indi clints
+            $tickets = DB::table('legal_tickets')      
+                ->where('id_company_to', Auth::user()->id_company)
+                ->where('id_status', '<>', 2)
+                ->where('id_status', '<>', 7)
+                ->where('unit_to_id', Auth::user()->head_unit_id) 
+                ->orderBy('id_priority', 'desc')      
+                ->get(); 
+
+            # This query selects all employees of single unit
+            $employees = DB::table('employees')
+                ->where('id_company', Auth::user()->id_company)
+                ->where('id_unit', Auth::user()->head_unit_id)
+                ->select('id', 'name')
+                ->get();
+
+        } else { 
+            # this query selects all tickets related to executor
+            $tickets = DB::table('legal_tickets')
+                ->where('id_company_to', Auth::user()->id_company)
+                ->where('id_executor', Auth::user()->id)
+                ->orderBy('id_priority', 'desc')
+                ->get();
+            $employees = NULL;
+        }
+
+        # This algorithm select the name of current executor by id
+        $current_executor = [];
+        $current_employee_init_name = "";
+        $i=0;
+
+        foreach($tickets as $ticket) {
+            
+            $tmpExecutorName = self::getExecutorName($ticket->id_executor);
+            $tmpEmployeeInitName = self::getClientInitName($ticket->id_client);
+            $tmpCurrentStatusName = self::getStatusName($ticket->id_status);
+            
+            $tickets[$i]->current_employee_init_name = $tmpEmployeeInitName;
+            $tickets[$i]->current_executor_name = $tmpExecutorName;
+            $tickets[$i]->current_status_name = $tmpCurrentStatusName;
+            $tickets[$i]->prio = $ticket->id_priority;
+
+            $tickets[$i]->employees = $employees;
+            $i++;
+            
+        }
+
+
+
+        
+/*
+        #$this->db->order_by('created_at', 'desc');
+        #$query = $this->db->get('tbl_employees'); */
+        /* if($query->num_rows() > 0){
+            $result = "lol";
+        } else{
+           $result = "err";
+        } */
+       
+        $result = "err";
+        echo json_encode($tickets);
+        
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     #
     # This func gets all outgoing tickets

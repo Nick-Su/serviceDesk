@@ -122,6 +122,7 @@
     @yield('content')
 
     <!-- Scripts -->
+    @yield('script')
     <script src="/js/app.js"></script>
 </body>
 

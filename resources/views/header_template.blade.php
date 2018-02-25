@@ -81,25 +81,26 @@
         </style>
 </head>
 <body>
-    <nav class="navbar navbar-default navbar-static-top">
-       @if (Route::has('login'))
-           <div class="top-right links">
-               @auth
-                   <a href="{{ url('/home') }}">Главная страница</a>
-               @else
-                   <a href="{{ url('/login') }}">Вход</a>  <!-- {{ route('login') }} -->
-                   <a href="{{ url('/register') }}">Регистрация</a> <!-- {{ route('register') }} -->
-               @endauth
-           </div>
-       @endif
-    </nav>
+    <div class="flex-center position-ref full-height">
+        @if (Route::has('login'))
+            <div class="top-right links">
+                @auth
+                    <a href="{{ url('/home') }}">Главная страница</a>
+                @else
+                    <a href="{{ url('/login') }}">Вход</a>  <!-- {{ route('login') }} -->
+                    <a href="{{ url('/register') }}">Регистрация</a> <!-- {{ route('register') }} -->
+                @endauth
+            </div>
+        @endif
 
-    @yield('content')
-
+            
+        @yield('content')
+            
+    </div>
 
     <!-- Scripts -->
     <script src="/js/app.js"></script>
-</body> -->
+</body>
 
 
     

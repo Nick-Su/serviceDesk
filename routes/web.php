@@ -10,6 +10,13 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/test', function(){
+  return view('test');
+});
+
+Route::get('/auth', function(){
+return view('legal.layout.auth');
+});
 
 Route::get('/', function () {
     return view('welcome');
@@ -81,3 +88,26 @@ Route::get('/login', function() {
 Route::get('/register', function() {
   return view('register');
 });
+
+
+//Route::get('/test', 'DynamicUpdateController@testfunction');
+// Route::post('/test', 'DynamicUpdateController@testfunction');
+
+/* Route::post('/test',function($task_id){
+    $task = "lol";
+
+    return Response::json($task);
+}); */
+
+//Route::post('/test', ['as' => 'companiesDelete', 'uses' => 'DynamicUpdateController@testfunction']);
+
+/*
+Route::get('/getRequest', function(){
+  if(Request::ajax()){
+    return 'Kek lol arbidol';
+  };
+});
+*/
+
+
+// Route::get('/getRequest', 'DynamicUpdateController@testfunction');
