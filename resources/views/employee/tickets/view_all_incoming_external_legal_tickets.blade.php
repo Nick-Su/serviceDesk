@@ -7,7 +7,6 @@ if(isset($_POST['userID']))
 {
     $uid = $_POST['userID'];
     echo $uid;
-    // Do whatever you want with the $uid
 }
 ?>
 <div class="row">
@@ -120,7 +119,7 @@ if(isset($_POST['userID']))
 
 <input type="hidden" id="authUserHeadUnitID" value="<?= Auth::user()->head_unit_id ?>">
 
- <meta name="_token" content="{!! csrf_token() !!}" />
+<meta name="_token" content="{!! csrf_token() !!}" />
 
 
 
@@ -314,14 +313,8 @@ $(document).ready(function () {
       //setInterval('show()', 5000);
   }); 
 
-</script>
-
-@endsection
 
 
-@section('script')
-
-<script type="text/javascript">
 // Original function
 /*
 function show()
@@ -350,5 +343,7 @@ function show()
   });
 
 */
+
 </script>
+
 @endsection
