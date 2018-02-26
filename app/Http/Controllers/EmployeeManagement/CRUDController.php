@@ -517,22 +517,9 @@ class CRUDController extends Controller
             $i++;
             
         }
-
-
-
-        
-/*
-        #$this->db->order_by('created_at', 'desc');
-        #$query = $this->db->get('tbl_employees'); */
-        /* if($query->num_rows() > 0){
-            $result = "lol";
-        } else{
-           $result = "err";
-        } */
        
         $result = "err";
         echo json_encode($tickets);
-        
     }
 
 
@@ -540,7 +527,18 @@ class CRUDController extends Controller
 
 
 
+    public function getHash(Request $request)
+    {
+        $tickets = DB::table('legal_tickets')
+                        ->where('id_company_to', Auth::user()->id_company)
+                        ->where('id_executor', Auth::user()->id)
+                        ->orderBy('id_priority', 'desc')
+                        ->get();
 
+        $hash = hash('sha256', $tickets);
+
+        echo $hash;
+    }
 
 
 

@@ -11,6 +11,8 @@ Route::get('/home', function () {
 
 Route::get('/getRequest', 'EmployeeManagement\CRUDController@sendTicketUpdate');
 
+
+Route::get('/getHash', 'EmployeeManagement\CRUDController@getHash');
 ####################################
 # Company Administration section
 ###################################

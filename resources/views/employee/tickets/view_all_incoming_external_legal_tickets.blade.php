@@ -264,10 +264,56 @@ function show() {
 
 
 
+function getHash() {
+  var tmp = null;
+  $.ajax({
+      'async': false,
+      'type': "get",
+      'global': false,
+      'dataType': 'html',
+      'url': "/employee/getHash",
+      'data': { 'request': "", 'target': 'arrange_url', 'method': 'method_target', "_token": "{{ csrf_token() }}" },
+      'success': function (data) {
+          tmp = data;
+      }
+  });
+  return tmp;
+};
+
+
+var currentHash = getHash();
+
+function compareHashes(oldHash)
+{
+  //console.log('Old '+ oldHash);
+  var newestHash = getHash();
+
+  //console.log('NewHash ' + newestHash);
+  //console.log('OldHash ' + oldHash); 
+
+  if (oldHash != getHash()) {
+    console.log('Hashes are differ! Show() is working now');
+    currentHash = newestHash;
+    show();
+  } else { 
+    //currentHash = newestHash;
+    console.log('Hashes are the same ' + currentHash);
+  }
+  
+  //console.log('new current hash ' + currentHash );
+
+  return newestHash; 
+}
+
+
 $(document).ready(function () {
-      show();
-      setInterval('show()', 5000);
+       
+      setInterval( function() { compareHashes(currentHash); }, 1000 );
+
+      //show();
+      //setInterval('show()', 5000);
   }); 
+
 </script>
 
 @endsection
